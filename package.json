@@ -9,13 +9,21 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "next": "12.2.3",
+    "@emotion/react": "^11.10.4",
+    "@emotion/server": "^11.10.0",
+    "@mantine/core": "^5.4.1",
+    "@mantine/form": "^5.4.1",
+    "@mantine/hooks": "^5.4.1",
+    "@mantine/next": "^5.4.1",
+    "@prisma/client": "^4.3.1",
+    "next": "^12.2.4-canary.9",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "eslint": "8.20.0",
     "eslint-config-next": "12.2.3",
-    "prisma": "^4.1.0"
+    "prisma": "^4.3.1"
   }
 }
