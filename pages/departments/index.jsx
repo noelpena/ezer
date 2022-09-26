@@ -5,6 +5,10 @@ import { Container } from '@mantine/core';
 import DepartmentList from './DepartmentList';
 import { SimpleGrid, Button } from '@mantine/core';
 
+BigInt.prototype["toJSON"] = function () {
+    return this.toString();
+  };
+
 export default function Departments({data}) {
   return (
     <Container>
@@ -13,10 +17,11 @@ export default function Departments({data}) {
             <link rel="icon" href="/favicon.ico" />
         </Head>
 
-        <SimpleGrid cols={3} spacing="lg">
+        <SimpleGrid cols={2} spacing="lg" style={{alignItems: "center"}}>
             <h2>View Departments</h2>
             <Button 
-                h={50}
+                className='justify-self-end'
+                style={{ width: "50%" }}
                 variant="gradient"
                 gradient={{ from: 'teal', to: 'blue', deg: 60 }}>
                 Add New
