@@ -2,6 +2,7 @@ import {useState} from 'react'
 
 export default function tempForm() {
 
+  // MEMBER
   const [fullName, setFullName] = useState('');
 
   const submitMember = async (e) => {
@@ -12,13 +13,30 @@ export default function tempForm() {
       body: JSON.stringify({full_name: fullName}) 
     });
     const data = await res.json();
-
-    console.log(data);
   } 
-
   const handleFullNameChange = e => {
     if(e.target.value !== ''){
       setFullName(e.target.value);
+    }
+  };
+
+  // DEPARTMENT
+  const [deptName, setDeptName] = useState('');
+
+  const submitDeptName = async (e) => {
+    e.preventDefault();
+
+    const res = await fetch(`api/departments/create`,{
+      method: 'POST',
+      body: JSON.stringify({
+        name: deptName
+      }) 
+    });
+    const data = await res.json();
+  } 
+  const handleDeptNameChange = e => {
+    if(e.target.value !== ''){
+      setDeptName(e.target.value);
     }
   };
 
@@ -38,9 +56,16 @@ export default function tempForm() {
       </form>   
 
       <h2>Add Department</h2> 
-      <form action="" id="form-new-department">
+      <form action="" id="form-new-department" onSubmit={(e) => submitDeptName(e)}>
         <label htmlFor="input-department">Department Name</label>
-        <input type="text" placeholder="Department Name" id="input-department" />
+        <input 
+          type="text"
+          placeholder="Department Name" 
+          id="input-department" 
+          onChange={(e) => handleDeptNameChange(e)}
+        />
+
+        <input type="submit" placeholder="Submit" />
       </form>
 
       <h2>Add Category</h2> 
