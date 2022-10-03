@@ -1,4 +1,7 @@
 import {useState} from 'react'
+import { DatePicker } from '@mantine/dates';
+import { useForm } from '@mantine/form';
+import { NumberInput, TextInput, Button } from '@mantine/core';
 
 export default function tempForm() {
 
@@ -8,7 +11,7 @@ export default function tempForm() {
   const submitMember = async (e) => {
     e.preventDefault();
 
-    const res = await fetch(`api/members/create`,{
+    const res = await fetch(`api/member/create`,{
       method: 'POST',
       body: JSON.stringify({full_name: fullName}) 
     });
@@ -26,7 +29,7 @@ export default function tempForm() {
   const submitDeptName = async (e) => {
     e.preventDefault();
 
-    const res = await fetch(`api/departments/create`,{
+    const res = await fetch(`api/department/create`,{
       method: 'POST',
       body: JSON.stringify({
         name: deptName
@@ -37,6 +40,50 @@ export default function tempForm() {
   const handleDeptNameChange = e => {
     if(e.target.value !== ''){
       setDeptName(e.target.value);
+    }
+  };
+
+  // DEPOSIT
+  const form = useForm({
+    initialValues: { date: '', name: '', amount: '', depositType: 'bank' },
+
+    // functions will be used to validate values at corresponding key
+    validate: {
+      name: (value) => (value.length < 2 ? 'Name must have at least 2 letters' : null),
+      date: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
+      amount: (value) => (value < 18 ? 'You must be at least 18 to register' : null),
+    },
+  });
+
+  const [depositData, setDepositData] = useState({
+    date: '',
+    amount: 0,
+    notes: '',
+    depositType: 'bank'
+  });
+
+  // validation
+  // amount can't be zero 
+  // amount has to be in cents
+
+  const submitDeposit = async (e) => {
+    e.preventDefault();
+
+    const res = await fetch(`api/deposit/create`,{
+      method: 'POST',
+      body: JSON.stringify(depositData) 
+    });
+    const data = await res.json();
+  } 
+  const handleDepositChange = e => {
+    const key = e.target.name;
+    if(e.target.value !== ''){
+      setDepositData((prevState) => {
+        return {
+          ...prevState,
+          [key]: e.target.value
+        };
+      });
     }
   };
 
@@ -131,27 +178,49 @@ export default function tempForm() {
 
 
       <h2>Add a New Deposit</h2> 
-      <form action="" id="form-new-deposit">
+      {/* <form action="" id="form-new-deposit" onSubmit={(e) => submitDeposit(e)}> */}
+      <form action="" id="form-new-deposit" onSubmit={form.onSubmit(console.log)}>
 
+        <DatePicker
+          label="Deposit Date:"
+          placeholder="Pick date"
+          firstDayOfWeek="sunday"
+        />
+
+        <TextInput label="Name" placeholder="Name" {...form.getInputProps('name')} />
+        <TextInput mt="sm" label="Email" placeholder="Email" {...form.getInputProps('email')} />
+        <NumberInput
+          mt="sm"
+          label="Age"
+          placeholder="Age"
+          min={0}
+          max={99}
+          {...form.getInputProps('age')}
+        />
+        <Button type="submit" mt="sm">
+          Submit
+        </Button>
+{/* 
         <label htmlFor="new-deposit-date">Deposit Date:</label>
-        <input name="date" type="date" id="new-deposit-date" />
+        <input name="date" type="date" id="new-deposit-date" onChange={(e) => handleDepositChange(e)} />
 
         <label htmlFor="new-deposit-amount">Amount</label>
-        <input name="amount" type="number" placeholder="1500.00" id="new-deposit-amount" />
+        <input name="amount" type="number" step='0.01' placeholder='0.00' id="new-deposit-amount" onChange={(e) => handleDepositChange(e)} />
 
         <label htmlFor="new-deposit-notes">Notes</label>
-        <textarea name="notes" id="new-deposit-notes"  rows="4" cols="50">
+        <textarea name="notes" id="new-deposit-notes"  rows="4" cols="50" onChange={(e) => handleDepositChange(e)}>
         </textarea>
 
         <label htmlFor="new-deposit-type">Deposit Type?</label>
-        <select name="deposit-type" id="new-deposit-type">
+        <select name="depositType" id="new-deposit-type" onChange={(e) => handleDepositChange(e)}>
           <option value="" disabled defaultValue={""}>Deposit Type</option>
           <option value="bank">Bank</option>
           <option value="venmo">Venmo</option>
-        </select>        
+        </select>      
+
+        <input type="submit" placeholder="Submit" /> */}
       </form> 
 
-          {/* SHOULD BE A DROPDOWN  */}
 
       <h2>Add a New Balance</h2> 
       <form action="" id="form-new-balance">

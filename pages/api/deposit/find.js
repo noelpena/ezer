@@ -1,5 +1,4 @@
-import { PrismaClient } from '@prisma/client'
-const prisma = new PrismaClient()
+import { prisma } from '../../../util/prismaClient.js'
 
 BigInt.prototype["toJSON"] = function () {
   return this.toString();
@@ -10,20 +9,20 @@ export default async function handler(req, res) {
     return res.status(405).json({message:'Method not allowed'})
   }
 
-  if(req.query.member === undefined){
+  if(req.query.deposit === undefined){
     return res.status(400).json({
-      message: 'Something went wrong. Member ID not found. Did you mean to find many?',
+      message: 'Something went wrong. Deposit ID not found. Did you mean to find many?',
     })    
   }
 
-  const member = await prisma.member.findUnique({
+  const deposit = await prisma.deposit.findUnique({
     where: {
-      id: req.query.member
+      id: req.query.deposit
     }
   });
 
   res.status(200).json({
-    message: "Member found",
-    data: member
+    message: "Deposit found",
+    data: deposit
   });
 }

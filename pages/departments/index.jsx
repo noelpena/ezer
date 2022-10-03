@@ -5,10 +5,6 @@ import { Container } from '@mantine/core';
 import DepartmentList from './DepartmentList';
 import { SimpleGrid, Button } from '@mantine/core';
 
-BigInt.prototype["toJSON"] = function () {
-    return this.toString();
-  };
-
 export default function Departments({data}) {
   return (
     <Container>
