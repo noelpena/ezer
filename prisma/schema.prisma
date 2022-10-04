@@ -19,22 +19,22 @@ model Category {
 }
 
 model Department {
-  id           BigInt    @id @default(autoincrement())
-  created_at         DateTime   @default(now()) @db.Timestamptz(6)
-  last_modified      DateTime   @default(now()) @db.Timestamptz(6)
-  name         String?
-  is_active    Boolean?  @default(true)
-  account_type String?
-  records      Record[]
-  balance      Balance?
+  id            BigInt     @id @default(autoincrement())
+  created_at    DateTime   @default(now()) @db.Timestamptz(6)
+  last_modified DateTime   @default(now()) @db.Timestamptz(6)
+  name          String?
+  is_active     Boolean?   @default(true)
+  account_type  String?
+  records       Record[]
+  balance       Balance?
 
   @@map("departments")
 }
 
 model Member {
   id                 String    @id @db.Uuid
-  created_at         DateTime   @default(now()) @db.Timestamptz(6)
-  last_modified      DateTime   @default(now()) @db.Timestamptz(6)
+  created_at         DateTime  @default(now()) @db.Timestamptz(6)
+  last_modified      DateTime  @default(now()) @db.Timestamptz(6)
   full_name          String?
   average_tithe      Int?      @default(0)
   highest_tithe      Int?      @default(0)
@@ -49,14 +49,14 @@ model Member {
 
 
 model Record {
-  id                 String    @id @db.Uuid
-  created_at         DateTime   @default(now()) @db.Timestamptz(6)
-  last_modified      DateTime   @default(now()) @db.Timestamptz(6)
-  member             Member?    @relation(fields: [member_id], references: [id])
-  member_id          String? @db.Uuid
-  department         Department? @relation(fields: [department_id], references: [id])
+  id                 String         @id @db.Uuid
+  created_at         DateTime       @default(now()) @db.Timestamptz(6)
+  last_modified      DateTime       @default(now()) @db.Timestamptz(6)
+  member             Member?        @relation(fields: [member_id], references: [id])
+  member_id          String?        @db.Uuid
+  department         Department?    @relation(fields: [department_id], references: [id])
   department_id      BigInt?
-  category           Category? @relation(fields: [category_id], references: [id])
+  category           Category?      @relation(fields: [category_id], references: [id])
   category_id        BigInt?
   amount             Int
   income_expense     IncomeExpense  @default(income)
@@ -64,64 +64,46 @@ model Record {
   description_notes  String?
   date               DateTime
   status             Status?
+  deposit            Deposit?       @relation(fields: [deposit_id], references: [id])
+  deposit_id         String?        @db.Uuid
   deposit_date       DateTime?
 
   @@map("records")
 }
 
-enum IncomeExpense {
-  income
-  expense
-}
-
-enum PaymentType {
-  cash
-  check
-  debitCard
-  venmo
-}
-
-enum Status {
-  deposited
-  recorded
-}
-
 model Deposit {
-  id                 String    @id @db.Uuid
-  created_at         DateTime   @default(now()) @db.Timestamptz(6)
-  last_modified      DateTime   @default(now()) @db.Timestamptz(6)
-  deposit_date       DateTime @db.Date
+  id                 String      @id @db.Uuid
+  created_at         DateTime    @default(now()) @db.Timestamptz(6)
+  last_modified      DateTime    @default(now()) @db.Timestamptz(6)
+  deposit_date       DateTime    @db.Date
   amount             Int
   notes              String?
   deposit_type       DepositType @default(bank)
+  records            Record[]
 
   @@map("deposits")
 }
 
-enum DepositType {
-  bank
-  venmo
-}
 
 model Balance {
-  id                 String    @id @db.Uuid
+  id                 String     @id @db.Uuid
   created_at         DateTime   @default(now()) @db.Timestamptz(6)
   last_modified      DateTime   @default(now()) @db.Timestamptz(6)
   department         Department @relation(fields: [department_id], references: [id])
-  department_id      BigInt @unique
+  department_id      BigInt     @unique
   balance            Int
   previous_balance   Int?
-  current_year       String? @db.VarChar(4)
-  previous_year      String? @db.VarChar(4)
+  current_year       String?    @db.VarChar(4)
+  previous_year      String?    @db.VarChar(4)
 
   @@map("balances")
 }
 
 model User {
-  id                 String    @id @db.Uuid
+  id                 String     @id @db.Uuid
   created_at         DateTime   @default(now()) @db.Timestamptz(6)
   last_modified      DateTime   @default(now()) @db.Timestamptz(6)
-  username           String @unique
+  username           String     @unique
   name               String
   email              String
   preferences        Preference?
@@ -141,6 +123,28 @@ model Preference {
   quick_links        Json?
 
   @@map("preferences")
+}
+
+enum IncomeExpense {
+  income
+  expense
+}
+
+enum PaymentType {
+  cash
+  check
+  debitCard
+  venmo
+}
+
+enum Status {
+  deposited
+  recorded
+}
+
+enum DepositType {
+  bank
+  venmo
 }
 
 enum Language {
