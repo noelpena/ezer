@@ -1,7 +1,16 @@
-import {useState} from 'react'
+import { useState } from 'react'
+import { z } from 'zod';
 import { DatePicker } from '@mantine/dates';
-import { useForm } from '@mantine/form';
-import { NumberInput, TextInput, Button } from '@mantine/core';
+import { useForm, zodResolver  } from '@mantine/form';
+import { Container, NativeSelect, Textarea, NumberInput, Button } from '@mantine/core';
+
+
+const depositSchema = z.object({
+  date: z.string().min(2, { message: 'Name should have at least 2 letters' }),
+  amount: z.number().min(18, { message: 'You must be at least 18 to create an account' }),
+  email: z.string().email({ message: 'Invalid email' }),
+  depositType: z.string().min(2, { message: 'Name should have at least 2 letters' }),
+});
 
 export default function tempForm() {
 
@@ -45,13 +54,12 @@ export default function tempForm() {
 
   // DEPOSIT
   const form = useForm({
-    initialValues: { date: '', name: '', amount: '', depositType: 'bank' },
-
-    // functions will be used to validate values at corresponding key
-    validate: {
-      name: (value) => (value.length < 2 ? 'Name must have at least 2 letters' : null),
-      date: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
-      amount: (value) => (value < 18 ? 'You must be at least 18 to register' : null),
+    validate: zodResolver(depositSchema),
+    initialValues: { 
+      date: '',
+      name: '',
+      amount: '',
+      depositType: 'bank'
     },
   });
 
@@ -88,7 +96,7 @@ export default function tempForm() {
   };
 
   return (
-    <>
+    <Container>
       <h2>Add new member</h2>
       <form action="" id="form-new-member" onSubmit={(e) => submitMember(e)}>
         <label htmlFor="input-name">Full Name</label>
@@ -183,20 +191,45 @@ export default function tempForm() {
 
         <DatePicker
           label="Deposit Date:"
-          placeholder="Pick date"
+          placeholder="Deposit date"
           firstDayOfWeek="sunday"
+          withAsterisk
         />
 
-        <TextInput label="Name" placeholder="Name" {...form.getInputProps('name')} />
-        <TextInput mt="sm" label="Email" placeholder="Email" {...form.getInputProps('email')} />
         <NumberInput
           mt="sm"
-          label="Age"
-          placeholder="Age"
-          min={0}
-          max={99}
-          {...form.getInputProps('age')}
+          label="Amount"
+          placeholder="0.00"
+          step={.01}
+          precision={2}
+          hideControls
+          withAsterisk
+          parser={(value) => value.replace(/\$\s?|(,*)/g, '')}
+          formatter={(value) =>
+            !Number.isNaN(parseFloat(value))
+            ? `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+            : '$ '
+          }
+          {...form.getInputProps('amount')}
         />
+
+        <Textarea
+          className='mt-2'
+          placeholder="Notes"
+          label="Notes"
+          autosize
+          minRows={2}
+          />
+
+        <NativeSelect
+          className='mt-2'
+          data={['Bank', 'Venmo']}
+          defaultValue='Bank'
+          placeholder="Pick one"
+          label="Select kind of deposit"
+          withAsterisk
+        />
+
         <Button type="submit" mt="sm">
           Submit
         </Button>
@@ -242,7 +275,7 @@ export default function tempForm() {
         <label htmlFor="new-balance-previous-year">Previous Year</label>
         <input name="previous-year" type="number" placeholder="2021" id="new-balance-previous-year" />     
       </form> 
-    </>
+    </Container>
 
   )
 }

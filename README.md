@@ -4,9 +4,12 @@ Stack used
 - NextJS
 - Supabase
 - Prisma
+- Mantine & Tailwind CSS
 
 ### Todo:
-- [ ] Create schema
+- [x] Create schema
 - [ ] Test CRUD
+- [ ] Form validation
+- [ ] CSV Import
 - [ ] Add auth
-- [ ] Repoting etc...
+- [ ] Reporting etc...
