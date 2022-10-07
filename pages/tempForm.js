@@ -6,10 +6,13 @@ import { Container, NativeSelect, Textarea, NumberInput, Button } from '@mantine
 
 
 const depositSchema = z.object({
-  date: z.string().min(2, { message: 'Name should have at least 2 letters' }),
-  amount: z.number().min(18, { message: 'You must be at least 18 to create an account' }),
-  email: z.string().email({ message: 'Invalid email' }),
-  depositType: z.string().min(2, { message: 'Name should have at least 2 letters' }),
+  date: z.date({
+    required_error: "Please select a date and time",
+    invalid_type_error: "That's not a date!",
+  }),
+  amount: z.number().min(1, { message: 'Amount must be greater than 0 (zero)' }),
+  notes: z.string(),
+  depositType: z.enum(["bank", "venmo"])
 });
 
 export default function tempForm() {
@@ -53,33 +56,21 @@ export default function tempForm() {
   };
 
   // DEPOSIT
-  const form = useForm({
+  const depositForm = useForm({
     validate: zodResolver(depositSchema),
     initialValues: { 
       date: '',
-      name: '',
-      amount: '',
+      amount: 0,
+      notes: '',
       depositType: 'bank'
     },
   });
 
-  const [depositData, setDepositData] = useState({
-    date: '',
-    amount: 0,
-    notes: '',
-    depositType: 'bank'
-  });
-
-  // validation
-  // amount can't be zero 
-  // amount has to be in cents
-
-  const submitDeposit = async (e) => {
-    e.preventDefault();
+  const submitDeposit = async (values) => {
 
     const res = await fetch(`api/deposit/create`,{
       method: 'POST',
-      body: JSON.stringify(depositData) 
+      body: JSON.stringify(values) 
     });
     const data = await res.json();
   } 
@@ -187,13 +178,14 @@ export default function tempForm() {
 
       <h2>Add a New Deposit</h2> 
       {/* <form action="" id="form-new-deposit" onSubmit={(e) => submitDeposit(e)}> */}
-      <form action="" id="form-new-deposit" onSubmit={form.onSubmit(console.log)}>
+      <form action="" id="form-new-deposit" onSubmit={depositForm.onSubmit((values) => submitDeposit(values))}>
 
         <DatePicker
           label="Deposit Date:"
           placeholder="Deposit date"
           firstDayOfWeek="sunday"
           withAsterisk
+          {...depositForm.getInputProps('date')}
         />
 
         <NumberInput
@@ -210,7 +202,7 @@ export default function tempForm() {
             ? `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
             : '$ '
           }
-          {...form.getInputProps('amount')}
+          {...depositForm.getInputProps('amount')}
         />
 
         <Textarea
@@ -219,15 +211,18 @@ export default function tempForm() {
           label="Notes"
           autosize
           minRows={2}
+          {...depositForm.getInputProps('notes')}
           />
 
         <NativeSelect
           className='mt-2'
-          data={['Bank', 'Venmo']}
-          defaultValue='Bank'
+          // data={['Bank', 'Venmo']}
+          data={[{ value: 'bank', label: 'Bank' }, { value: 'venmo', label: 'Venmo' }]}
+          value='Bank'
           placeholder="Pick one"
           label="Select kind of deposit"
           withAsterisk
+          {...depositForm.getInputProps('depositType')}
         />
 
         <Button type="submit" mt="sm">

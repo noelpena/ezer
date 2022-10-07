@@ -3,7 +3,8 @@ import Head from 'next/head'
 import { PrismaClient } from '@prisma/client'
 import MemberList from './MemberList'
 import { Container } from '@mantine/core';
-// import serializeBigInt from '../../util/serializeBigInt';
+import SerialBigInt from '../../util/serializeBigInt.js'
+SerialBigInt();
 
 export default function Members({data}) {
   return (

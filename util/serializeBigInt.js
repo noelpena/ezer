@@ -1,3 +1,5 @@
-export default BigInt.prototype["toJSON"] = function () {
-  return this.toString();
-};
+export default function SerialBigInt(){ 
+  BigInt.prototype["toJSON"] = function () {
+    return this.toString();
+  };
+}

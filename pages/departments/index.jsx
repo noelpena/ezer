@@ -4,6 +4,9 @@ import { PrismaClient } from '@prisma/client'
 import { Container } from '@mantine/core';
 import DepartmentList from './DepartmentList';
 import { SimpleGrid, Button } from '@mantine/core';
+import { IconChevronDown } from '@tabler/icons';
+import SerialBigInt from '../../util/serializeBigInt.js'
+SerialBigInt();
 
 export default function Departments({data}) {
   return (
@@ -15,13 +18,19 @@ export default function Departments({data}) {
 
         <SimpleGrid cols={2} spacing="lg" style={{alignItems: "center"}}>
             <h2>View Departments</h2>
-            <Button 
-                className='justify-self-end'
-                style={{ width: "50%" }}
-                variant="gradient"
-                gradient={{ from: 'teal', to: 'blue', deg: 60 }}>
-                Add New
-            </Button>
+
+            <Button.Group className='justify-self-end'>
+                <Button 
+                    variant="gradient"
+                    gradient={{ from: 'teal', to: 'blue', deg: 60 }}>
+                    Add New
+                </Button>
+                <Button
+                    color='blue'>
+                    <IconChevronDown size={18} />
+                </Button>
+            </Button.Group>
+
         </SimpleGrid>
         <DepartmentList data={data} />
     </Container>
