@@ -74,6 +74,7 @@ export default function tempForm() {
     });
     const data = await res.json();
   } 
+  
   const handleDepositChange = e => {
     const key = e.target.name;
     if(e.target.value !== ''){
@@ -228,25 +229,6 @@ export default function tempForm() {
         <Button type="submit" mt="sm">
           Submit
         </Button>
-{/* 
-        <label htmlFor="new-deposit-date">Deposit Date:</label>
-        <input name="date" type="date" id="new-deposit-date" onChange={(e) => handleDepositChange(e)} />
-
-        <label htmlFor="new-deposit-amount">Amount</label>
-        <input name="amount" type="number" step='0.01' placeholder='0.00' id="new-deposit-amount" onChange={(e) => handleDepositChange(e)} />
-
-        <label htmlFor="new-deposit-notes">Notes</label>
-        <textarea name="notes" id="new-deposit-notes"  rows="4" cols="50" onChange={(e) => handleDepositChange(e)}>
-        </textarea>
-
-        <label htmlFor="new-deposit-type">Deposit Type?</label>
-        <select name="depositType" id="new-deposit-type" onChange={(e) => handleDepositChange(e)}>
-          <option value="" disabled defaultValue={""}>Deposit Type</option>
-          <option value="bank">Bank</option>
-          <option value="venmo">Venmo</option>
-        </select>      
-
-        <input type="submit" placeholder="Submit" /> */}
       </form> 
 
 

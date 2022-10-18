@@ -3,16 +3,21 @@ import Head from 'next/head'
 import { useState } from 'react';
 import { PrismaClient } from '@prisma/client'
 import DepartmentList from './DepartmentList';
-import { Container, SimpleGrid, Button, Modal } from '@mantine/core';
+import { Container, SimpleGrid, Button } from '@mantine/core';
 import { IconChevronDown } from '@tabler/icons';
 import SerialBigInt from '../../util/serializeBigInt.js'
+import DeptModal from '../../components/DeptModal';
 SerialBigInt();
 
-export default function Departments({data}) {
+export default function Departments({data}) {    
     const [opened, setOpened] = useState(false);
 
-    return (
-        <>        
+    const toggleModal = function(tf) {
+        setOpened(tf);
+    };
+
+    return (    
+        <>
             <Container>
                 <Head>
                     <title>View Departments</title>
@@ -26,7 +31,8 @@ export default function Departments({data}) {
                         <Button 
                             variant="gradient"
                             gradient={{ from: 'teal', to: 'blue', deg: 60 }}
-                            onClick={() => setOpened(true)}>
+                            onClick={() => setOpened(true)}
+                            >
                             Add New
                         </Button>
                         <Button className='px-1' color='blue'>
@@ -37,67 +43,11 @@ export default function Departments({data}) {
                 </SimpleGrid>
                 <DepartmentList data={data} />
             </Container>
-            <Modal
-                opened={opened}
-                onClose={() => setOpened(false)}
-                title="Add New Department"
-            >
-                <form id="form-new-department" onSubmit={depositForm.onSubmit((values) => submitDeposit(values))}>
-
-                    <DatePicker
-                    label="Deposit Date:"
-                    placeholder="Deposit date"
-                    firstDayOfWeek="sunday"
-                    withAsterisk
-                    {...depositForm.getInputProps('date')}
-                    />
-
-                    <NumberInput
-                    mt="sm"
-                    label="Amount"
-                    placeholder="0.00"
-                    step={.01}
-                    precision={2}
-                    hideControls
-                    withAsterisk
-                    parser={(value) => value.replace(/\$\s?|(,*)/g, '')}
-                    formatter={(value) =>
-                        !Number.isNaN(parseFloat(value))
-                        ? `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-                        : '$ '
-                    }
-                    {...depositForm.getInputProps('amount')}
-                    />
-
-                    <Textarea
-                    className='mt-2'
-                    placeholder="Notes"
-                    label="Notes"
-                    autosize
-                    minRows={2}
-                    {...depositForm.getInputProps('notes')}
-                    />
-
-                    <NativeSelect
-                    className='mt-2'
-                    // data={['Bank', 'Venmo']}
-                    data={[{ value: 'bank', label: 'Bank' }, { value: 'venmo', label: 'Venmo' }]}
-                    value='Bank'
-                    placeholder="Pick one"
-                    label="Select kind of deposit"
-                    withAsterisk
-                    {...depositForm.getInputProps('depositType')}
-                    />
-
-                    <Button type="submit" mt="sm">
-                    Submit
-                    </Button>
-                </form>
-            </Modal>
+            
+            <DeptModal isModalOpen={opened} toggle={toggleModal} />
         </>
     )
 }
-
 
 export async function getServerSideProps() {
     const prisma = new PrismaClient()
