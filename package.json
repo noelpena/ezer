@@ -17,6 +17,7 @@
     "@supabase/auth-ui-shared": "^0.1.8",
     "@supabase/ssr": "^0.0.10",
     "@supabase/supabase-js": "^2.39.2",
+    "@tabler/icons-react": "^2.46.0",
     "cookies-next": "^4.1.0",
     "dayjs": "^1.11.10",
     "lodash": "^4.17.21",

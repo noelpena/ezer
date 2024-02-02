@@ -1,4 +1,5 @@
 import _ from "lodash";
+import Head from "next/head";
 import React, { useState } from "react";
 import { zodResolver } from "mantine-form-zod-resolver";
 import { z } from "zod";
@@ -25,6 +26,9 @@ import type {
 import { DateInput } from "@mantine/dates";
 import capitalize from "@/utils/capitalize";
 import googleDate from "@/utils/googleDate";
+import Layout from "@/components/Layout";
+
+import { Session } from "@supabase/supabase-js";
 
 type mantineSelectData = {
 	value: string;
@@ -32,14 +36,26 @@ type mantineSelectData = {
 };
 
 type NewRecordProps = {
+	session: Session;
 	dept_data: Department[];
 	cat_data: Category[];
 	member_data: Member[];
 };
 
 const GOOGLE_PROJECT_BASE_URL = process.env.NEXT_PUBLIC_GOOGLE_PROJECT_BASE_URL;
-const NewRecord = ({ dept_data, cat_data, member_data }: NewRecordProps) => {
-	const [cat, setCat] = useState<string>("");
+
+const NewRecord = ({
+	session,
+	dept_data,
+	cat_data,
+	member_data,
+}: NewRecordProps) => {
+	const [showMemberDropdown, setShowMemberDropdown] = useState<
+		boolean | null
+	>(false);
+	const [showDeptDropdown, setShowDeptDropdown] = useState<boolean | null>(
+		false
+	);
 
 	function cat_names(cat_data: Category[]) {
 		if (!cat_data) {
@@ -93,12 +109,15 @@ const NewRecord = ({ dept_data, cat_data, member_data }: NewRecordProps) => {
 	const newRecordSchema = z.object({
 		member_id: z.string().uuid().nullable(),
 		department_id: z.number().or(z.string()).nullable(),
-		category_id: z.number().or(z.string()),
-		amount: z.number().refine(
-			(n) => {
-				return n.toString().split(".")[1].length <= 2;
-			},
-			{ message: "Max precision is 2 decimal places" }
+		category_id: z.number().or(z.string().nullable()),
+		// category_id: z.number().or(z.string()).nullable(),
+		amount: z.number().or(
+			z.number().refine(
+				(n) => {
+					return n.toString().split(".")[1].length <= 2;
+				},
+				{ message: "Max precision is 2 decimal places" }
+			)
 		),
 		income_expense: z.enum(["income", "expense"]),
 		payment_type: z.enum(["cash", "check", "venmo", "debitCard"]),
@@ -116,7 +135,7 @@ const NewRecord = ({ dept_data, cat_data, member_data }: NewRecordProps) => {
 		initialValues: {
 			member_id: null,
 			department_id: null,
-			category_id: cat,
+			category_id: "",
 			amount: 0,
 			income_expense: "income",
 			payment_type: "cash",
@@ -153,22 +172,35 @@ const NewRecord = ({ dept_data, cat_data, member_data }: NewRecordProps) => {
 		}
 
 		tesoreriaForm.reset();
-		setCat("");
 	};
 
 	const handleCategoryClick = (event: React.MouseEvent<HTMLElement>) => {
 		const input = event.target as HTMLElement;
-		setCat(input.innerText);
-		// setCat("1");
-	};
+		// console.log(input.innerText);
+		// console.log(tesoreriaForm);
 
-	const handleCatSearchChange = (event: React.ChangeEvent) => {
-		console.dir(event);
-		const selectedCat = event.toString();
-		if (selectedCat === cat) {
-			return false;
+		switch (input.innerText) {
+			case "Diezmo":
+				tesoreriaForm.setValues({ category_id: "1" });
+				setShowMemberDropdown(true);
+				setShowDeptDropdown(false);
+				break;
+			case "Ofrenda":
+				tesoreriaForm.setValues({ category_id: "2" });
+				setShowMemberDropdown(false);
+				setShowDeptDropdown(true);
+				break;
+			case "Other":
+				//@ts-ignore
+				tesoreriaForm.setValues({ category_id: null });
+				setShowMemberDropdown(false);
+				setShowDeptDropdown(true);
+				break;
+			default:
+				tesoreriaForm.setValues({ category_id: "" });
+				setShowMemberDropdown(false);
+				setShowDeptDropdown(true);
 		}
-		setCat(selectedCat);
 	};
 
 	const add2GoogleSheet = async (data: any) => {
@@ -181,7 +213,7 @@ const NewRecord = ({ dept_data, cat_data, member_data }: NewRecordProps) => {
 						&cantidad=${data.amount / 100}
 						&entrada_o_salida=${data.entrada_salida}
 						&cash_o_check=${data.payment_type}
-						&descripcion=${data.description_notes}
+						&descripcion=${encodeURIComponent(data.description_notes)}
 						&date=${googleDate(data.date)}
 						&status=${capitalize(data.status)}`);
 
@@ -191,156 +223,186 @@ const NewRecord = ({ dept_data, cat_data, member_data }: NewRecordProps) => {
 	};
 
 	return (
-		<div className="h-screen w-full m-auto mt-12">
-			{/* <SimpleGrid cols={3}>
-				<Button
-					variant="filled"
-					size="xl"
-					onClick={handleCategoryClick}
-					className="p-8"
-				>
-					Diezmo
-				</Button>
+		<>
+			<Head>
+				<title>Ezer | New Record</title>
+			</Head>
+			<Layout session={session}>
+				<div className="h-screen max-w-screen-lg mt-6 mb-12 mx-4">
+					<SimpleGrid cols={{ sm: 3 }}>
+						<Button
+							variant="filled"
+							size="xl"
+							onClick={handleCategoryClick}
+							className="p-8"
+						>
+							Diezmo
+						</Button>
 
-				<Button variant="light" size="xl" onClick={handleCategoryClick}>
-					Ofrenda
-				</Button>
+						<Button
+							variant="light"
+							size="xl"
+							onClick={handleCategoryClick}
+						>
+							Ofrenda
+						</Button>
 
-				<Button
-					variant="outline"
-					size="xl"
-					onClick={handleCategoryClick}
-				>
-					Other
-				</Button>
-			</SimpleGrid> */}
+						<Button
+							variant="outline"
+							size="xl"
+							onClick={handleCategoryClick}
+						>
+							Other
+						</Button>
+					</SimpleGrid>
 
-			<form
-				className="flex flex-col gap-y-6"
-				action=""
-				id="form-add-record"
-				onSubmit={tesoreriaForm.onSubmit((values) =>
-					submitNewRecord(values)
-				)}
-			>
-				<Select
-					label="Category"
-					placeholder="Pick Category"
-					data={cat_names(cat_data)}
-					searchable
-					// onSearchChange={handleCatSearchChange}
-					// searchValue={cat}
-					size="xl"
-					{...tesoreriaForm.getInputProps("category_id")}
-				/>
+					<form
+						className="flex flex-col gap-y-6 mt-3"
+						action=""
+						id="form-add-record"
+						onSubmit={tesoreriaForm.onSubmit((values) =>
+							submitNewRecord(values)
+						)}
+					>
+						<Select
+							label="Category"
+							placeholder="Pick Category"
+							data={cat_names(cat_data)}
+							size="lg"
+							clearable={true}
+							// searchable
+							// onSearchChange={handleCatSearchChange}
+							// searchValue={cat}
+							{...tesoreriaForm.getInputProps("category_id")}
+						/>
 
-				<Select
-					label="Member Name"
-					placeholder="Choose Member"
-					data={member_names(member_data)}
-					searchable
-					size="xl"
-					{...tesoreriaForm.getInputProps("member_id")}
-				/>
+						<Select
+							className={showMemberDropdown ? "block" : "hidden"}
+							label="Member Name"
+							placeholder="Choose Member"
+							data={member_names(member_data)}
+							searchable
+							size="lg"
+							{...tesoreriaForm.getInputProps("member_id")}
+						/>
 
-				<Select
-					label="Departamentos y Sociedades"
-					placeholder="Pick Departamentos o Sociedad"
-					data={dept_names(dept_data)}
-					searchable
-					size="xl"
-					{...tesoreriaForm.getInputProps("department_id")}
-				/>
+						<Select
+							className={showDeptDropdown ? "block" : "hidden"}
+							label="Departamentos y Sociedades"
+							placeholder="Pick Departamentos o Sociedad"
+							data={dept_names(dept_data)}
+							searchable
+							size="lg"
+							{...tesoreriaForm.getInputProps("department_id")}
+						/>
 
-				<NumberInput
-					label="Amount"
-					placeholder="Dollars"
-					prefix="$"
-					min={0}
-					defaultValue={0.0}
-					mb="md"
-					size="xl"
-					{...tesoreriaForm.getInputProps("amount")}
-				/>
+						<NumberInput
+							label="Amount"
+							placeholder="Dollars"
+							prefix="$"
+							min={0}
+							defaultValue={0.0}
+							// mb="md"
+							size="lg"
+							{...tesoreriaForm.getInputProps("amount")}
+						/>
 
-				<Select
-					label="Entrada o Salida?"
-					placeholder="Entrada o Salida"
-					data={[
-						{
-							value: "income",
-							label: "Entrada",
-						},
-						{
-							value: "expense",
-							label: "Salida",
-						},
-					]}
-					value="Entrada"
-					size="xl"
-					{...tesoreriaForm.getInputProps("income_expense")}
-				/>
+						<Select
+							label="Entrada o Salida?"
+							placeholder="Entrada o Salida"
+							data={[
+								{
+									value: "income",
+									label: "Entrada",
+								},
+								{
+									value: "expense",
+									label: "Salida",
+								},
+							]}
+							value="Entrada"
+							size="lg"
+							{...tesoreriaForm.getInputProps("income_expense")}
+						/>
 
-				<Select
-					label="Cash o Check?"
-					placeholder="Cash o Check"
-					data={[
-						{
-							value: "cash",
-							label: "Cash",
-						},
-						{
-							value: "check",
-							label: "Check",
-						},
-						{
-							value: "venmo",
-							label: "Venmo",
-						},
-						{
-							value: "debitCard",
-							label: "Debit Card",
-						},
-					]}
-					value="Entrada"
-					size="xl"
-					{...tesoreriaForm.getInputProps("payment_type")}
-				/>
+						<Select
+							label="Cash o Check?"
+							placeholder="Cash o Check"
+							data={[
+								{
+									value: "cash",
+									label: "Cash",
+								},
+								{
+									value: "check",
+									label: "Check",
+								},
+								{
+									value: "venmo",
+									label: "Venmo",
+								},
+								{
+									value: "debitCard",
+									label: "Debit Card",
+								},
+							]}
+							value="Entrada"
+							size="lg"
+							{...tesoreriaForm.getInputProps("payment_type")}
+						/>
 
-				<Textarea
-					label="Description or Notes"
-					placeholder=""
-					size="xl"
-					{...tesoreriaForm.getInputProps("description_notes")}
-				/>
+						<Textarea
+							label="Description or Notes"
+							placeholder=""
+							size="lg"
+							rows={2}
+							{...tesoreriaForm.getInputProps(
+								"description_notes"
+							)}
+						/>
 
-				<DateInput
-					valueFormat="MM/DD/YYYY"
-					// defaultvalue={new Date()}
-					label="Date"
-					placeholder="Date"
-					size="xl"
-					{...tesoreriaForm.getInputProps("date")}
-				/>
+						<DateInput
+							valueFormat="MM/DD/YYYY"
+							// defaultvalue={new Date()}
+							label="Date"
+							placeholder="Date"
+							size="lg"
+							{...tesoreriaForm.getInputProps("date")}
+						/>
 
-				<Button
-					// onClick={submitNewRecord}
-					color="green"
-					variant="filled"
-					size="xl"
-					id="submit-btn"
-					type="submit"
-				>
-					Submit
-				</Button>
-			</form>
-		</div>
+						<Button
+							// onClick={submitNewRecord}
+							color="green"
+							variant="filled"
+							size="lg"
+							id="submit-btn"
+							type="submit"
+						>
+							Submit
+						</Button>
+					</form>
+				</div>
+			</Layout>
+		</>
 	);
 };
 export default NewRecord;
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
 	const supabase = createSupabaseReqResClient(ctx);
+
+	const {
+		data: { session },
+	} = await supabase.auth.getSession();
+
+	if (!session) {
+		return {
+			redirect: {
+				permanent: false,
+				destination: "/",
+			},
+		};
+	}
 
 	try {
 		const [department_res, category_res, member_res]: [
@@ -358,7 +420,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
 		const { data: member_data, error: member_error } = member_res;
 
 		return {
-			props: { dept_data, cat_data, member_data },
+			props: { session, dept_data, cat_data, member_data },
 		};
 	} catch (error) {
 		console.error(

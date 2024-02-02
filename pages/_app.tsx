@@ -1,7 +1,8 @@
 import "@/styles/globals.css";
+import "@mantine/core/styles.css";
+
 import type { AppProps } from "next/app";
 import { createTheme, MantineProvider } from "@mantine/core";
-import "@mantine/core/styles.css";
 
 import { Notifications } from "@mantine/notifications";
 
@@ -10,9 +11,9 @@ const theme = createTheme({
 });
 export default function App({ Component, pageProps }: AppProps) {
 	return (
-		<MantineProvider theme={theme}>
+		<MantineProvider>
 			<Notifications position="top-right" zIndex={2077} />
-			<Component {...pageProps} />;
+			<Component {...pageProps} />
 		</MantineProvider>
 	);
 }
