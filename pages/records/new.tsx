@@ -29,6 +29,7 @@ import googleDate from "@/utils/googleDate";
 import Layout from "@/components/Layout";
 
 import { Session } from "@supabase/supabase-js";
+import formatDate from "@/utils/formatDate";
 
 type mantineSelectData = {
 	value: string;
@@ -147,6 +148,11 @@ const NewRecord = ({
 	});
 
 	const submitNewRecord = async (values: any) => {
+		if (values.department_id == null && values.member_id == null) {
+			console.error("department or member is required");
+			return false;
+		}
+
 		var newData = _.cloneDeep(values);
 		console.log(values);
 
@@ -171,7 +177,14 @@ const NewRecord = ({
 			await add2GoogleSheet(data[0]);
 		}
 
+		const previousDate = formatDate(data[0].date);
+
 		tesoreriaForm.reset();
+		//@ts-ignore
+		tesoreriaForm.setValues({ category_id: null });
+		tesoreriaForm.setValues({ date: new Date(previousDate) });
+		setShowMemberDropdown(false);
+		setShowDeptDropdown(false);
 	};
 
 	const handleCategoryClick = (event: React.MouseEvent<HTMLElement>) => {
