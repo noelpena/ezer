@@ -18,6 +18,5 @@
 
 body {
 	color: rgb(var(--foreground-rgb));
-	max-width: 1200px !important;
 	margin: auto !important;
 }

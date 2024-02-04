@@ -51,6 +51,7 @@ const NewRecord = ({
 	cat_data,
 	member_data,
 }: NewRecordProps) => {
+	const [btnIsDisabled, setBtnIsDisabled] = useState<boolean>(false);
 	const [showMemberDropdown, setShowMemberDropdown] = useState<
 		boolean | null
 	>(false);
@@ -148,6 +149,7 @@ const NewRecord = ({
 	});
 
 	const submitNewRecord = async (values: any) => {
+		setBtnIsDisabled(true);
 		if (values.department_id == null && values.member_id == null) {
 			console.error("department or member is required");
 			return false;
@@ -185,6 +187,7 @@ const NewRecord = ({
 		tesoreriaForm.setValues({ date: new Date(previousDate) });
 		setShowMemberDropdown(false);
 		setShowDeptDropdown(false);
+		setBtnIsDisabled(false);
 	};
 
 	const handleCategoryClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -390,6 +393,8 @@ const NewRecord = ({
 							size="lg"
 							id="submit-btn"
 							type="submit"
+							loading={btnIsDisabled}
+							// disabled={btnIsDisabled}
 						>
 							Submit
 						</Button>

@@ -4,3 +4,5 @@
 -   [ ] RLS in supabase? Roles?
 -   [ ] remote Doubleclick on form
 -   [ ] /new/record and /new/deposit instead of /record/new
+-   [ ] Permissions
+-   [ ] Preference of language

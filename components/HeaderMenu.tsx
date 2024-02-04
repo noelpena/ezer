@@ -21,7 +21,7 @@ const links = [
 		label: "Create New",
 		links: [
 			{ link: "/records/new", label: "Record" },
-			{ link: "/Deposit/new", label: "Deposit" },
+			{ link: "/deposit/new", label: "Deposit" },
 			{ link: "/resources", label: "Department" },
 			{ link: "/community", label: "Member" },
 			{ link: "/blog", label: "Balance" },
