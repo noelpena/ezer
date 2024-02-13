@@ -146,30 +146,22 @@ export default Login;
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
 	const supabase = createSupabaseReqResClient(ctx);
-	// // Check if we have a user
-	// const {
-	// 	data: { user },
-	// } = await supabase.auth.getUser();
-
 	const {
-		data: { session },
-	} = await supabase.auth.getSession();
+		data: { user },
+		error,
+	} = await supabase.auth.getUser();
 
-	// let { data: departments, error } = await supabase
-	// 	.from("departments")
-	// 	.select("*");
+	var sesh: Session | null = null;
+	if (user) {
+		const {
+			data: { session },
+		} = await supabase.auth.getSession();
+		sesh = session;
+	}
 
-	console.log(session);
-
-	// // if (!user)
-	// // 	return {
-	// // 		redirect: {
-	// // 			destination: "/",
-	// // 			permanent: false,
-	// // 		},
-	// // 	};
+	console.log(sesh);
 
 	return {
-		props: { session },
+		props: { sesh },
 	};
 };

@@ -1,11 +1,14 @@
 import type { Database } from "@/types/database.types";
-import { createBrowserClient, createServerClient } from "@supabase/ssr";
-import { getCookie, setCookie } from "cookies-next";
-import { NextRequest, NextResponse } from "next/server";
 import {
-	GetServerSidePropsContext,
-	NextApiRequest,
-	NextApiResponse,
+	createBrowserClient,
+	createServerClient,
+	type CookieOptions,
+	serialize,
+} from "@supabase/ssr";
+import {
+	type GetServerSidePropsContext,
+	type NextApiRequest,
+	type NextApiResponse,
 } from "next/types";
 
 export function createSupabaseFrontendClient() {
@@ -15,41 +18,57 @@ export function createSupabaseFrontendClient() {
 	);
 }
 
-type ReqRes =
-	| {
-			request: NextApiRequest;
-			response: NextApiResponse;
-	  }
-	| undefined;
-
 export const createSupabaseReqResClient = (
-	context: GetServerSidePropsContext | undefined,
-	ReqResObj: ReqRes = undefined
+	context: GetServerSidePropsContext
 ) => {
-	let req: any,
-		res: any = null;
-
-	if (context) {
-		req = context.req;
-		res = context.res;
-	} else {
-		req = ReqResObj?.request;
-		res = ReqResObj?.response;
-	}
-
-	return createServerClient<Database>(
+	return createServerClient(
 		process.env.NEXT_PUBLIC_SUPABASE_URL!,
 		process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
 		{
 			cookies: {
-				get(name) {
-					return getCookie(name, { req, res });
+				get(name: string) {
+					return context.req.cookies[name];
 				},
-				set(name, value, options) {
-					setCookie(name, value, { req, res, ...options });
+				set(name: string, value: string, options: CookieOptions) {
+					context.res.appendHeader(
+						"Set-Cookie",
+						serialize(name, value, options)
+					);
 				},
-				remove(name, options) {
-					setCookie(name, "", { req, res, ...options });
+				remove(name: string, options: CookieOptions) {
+					context.res.appendHeader(
+						"Set-Cookie",
+						serialize(name, "", options)
+					);
+				},
+			},
+		}
+	);
+};
+
+export const createApiRouteClient = (
+	req: NextApiRequest,
+	res: NextApiResponse
+) => {
+	return createServerClient(
+		process.env.NEXT_PUBLIC_SUPABASE_URL!,
+		process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+		{
+			cookies: {
+				get(name: string) {
+					return req.cookies[name];
+				},
+				set(name: string, value: string, options: CookieOptions) {
+					res.appendHeader(
+						"Set-Cookie",
+						serialize(name, value, options)
+					);
+				},
+				remove(name: string, options: CookieOptions) {
+					res.appendHeader(
+						"Set-Cookie",
+						serialize(name, "", options)
+					);
 				},
 			},
 		}

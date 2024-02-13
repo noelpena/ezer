@@ -1,5 +1,4 @@
 import { Inter } from "next/font/google";
-import Link from "next/link";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -12,8 +11,7 @@ import {
 } from "@/utils/supabase";
 import type { GetServerSidePropsContext } from "next";
 import { Session } from "@supabase/gotrue-js/src/lib/types";
-import { Button, Title } from "@mantine/core";
-import HeaderMenu from "@/components/HeaderMenu";
+import { Title } from "@mantine/core";
 import Layout from "@/components/Layout";
 
 const inter = Inter({ subsets: ["latin"] });

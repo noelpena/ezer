@@ -1,17 +1,39 @@
-import { NextApiHandler, NextApiRequest, NextApiResponse } from "next";
-import { createSupabaseReqResClient } from "@/utils/supabase";
+import { type EmailOtpType } from "@supabase/supabase-js";
+import type { NextApiRequest, NextApiResponse } from "next";
 
-const handler: NextApiHandler = async (req, res) => {
-	const { code } = req.query;
-	if (code) {
-		const supabase = createSupabaseReqResClient(undefined, {
-			request: req,
-			response: res,
-		});
-		await supabase.auth.exchangeCodeForSession(String(code));
+import { createApiRouteClient } from "@/utils/supabase";
+
+function stringOrFirstString(item: string | string[] | undefined) {
+	return Array.isArray(item) ? item[0] : item;
+}
+
+export default async function handler(
+	req: NextApiRequest,
+	res: NextApiResponse
+) {
+	if (req.method !== "GET") {
+		res.status(405).appendHeader("Allow", "GET").end();
+		return;
 	}
 
-	res.redirect("/");
-};
+	const queryParams = req.query;
+	const token_hash = stringOrFirstString(queryParams.token_hash);
+	const type = stringOrFirstString(queryParams.type);
 
-export default handler;
+	let next = "/error";
+
+	if (token_hash && type) {
+		const supabase = createApiRouteClient(req, res);
+		const { error } = await supabase.auth.verifyOtp({
+			type: type as EmailOtpType,
+			token_hash,
+		});
+		if (error) {
+			console.error(error);
+		} else {
+			next = stringOrFirstString(queryParams.next) || "/";
+		}
+	}
+
+	res.redirect(next);
+}

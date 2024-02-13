@@ -1,7 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { v4 as uuidv4 } from "uuid";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { createSupabaseReqResClient } from "@/utils/supabase";
+import { createApiRouteClient } from "@/utils/supabase";
 import { Supabase_Response, Record, GoogleSheetView } from "@/types/models";
 import { PostgrestError } from "@supabase/supabase-js";
 
@@ -28,10 +28,7 @@ async function createNewRecord(
 	req: NextApiRequest,
 	res: NextApiResponse<Data>
 ) {
-	const supabase = createSupabaseReqResClient(undefined, {
-		request: req,
-		response: res,
-	});
+	const supabase = createApiRouteClient(req, res);
 	const body = JSON.parse(req.body);
 	body.id = uuidv4();
 
