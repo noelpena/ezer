@@ -17,11 +17,11 @@ import Link from "next/link";
 const links = [
 	{ link: "/view/records", label: "View Records" },
 	{
-		link: "#1",
+		link: "#",
 		label: "Create New",
 		links: [
-			{ link: "/records/new", label: "Record" },
-			{ link: "/deposit/new", label: "Deposit" },
+			{ link: "/new/record", label: "Record" },
+			{ link: "/new/deposit", label: "Deposit" },
 			{ link: "/resources", label: "Department" },
 			{ link: "/community", label: "Member" },
 			{ link: "/blog", label: "Balance" },
@@ -111,7 +111,11 @@ const HeaderMenu = ({ isLoggedIn, handleSignOut }: AppProps) => {
 						hiddenFrom="sm"
 					/>
 					{isLoggedIn ? (
-						<Button variant="filled" onClick={handleSignOut}>
+						<Button
+							variant="filled"
+							color="gray"
+							onClick={handleSignOut}
+						>
 							Sign out
 						</Button>
 					) : (

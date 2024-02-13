@@ -6,7 +6,7 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[]
 
-export interface Database {
+export type Database = {
   public: {
     Tables: {
       balances: {
@@ -14,7 +14,7 @@ export interface Database {
           balance: number
           created_at: string
           current_year: string | null
-          department_id: number
+          department_id: number | null
           id: string
           last_modified: string
           previous_balance: number | null
@@ -24,8 +24,8 @@ export interface Database {
           balance: number
           created_at?: string
           current_year?: string | null
-          department_id: number
-          id: string
+          department_id?: number | null
+          id?: string
           last_modified?: string
           previous_balance?: number | null
           previous_year?: string | null
@@ -34,7 +34,7 @@ export interface Database {
           balance?: number
           created_at?: string
           current_year?: string | null
-          department_id?: number
+          department_id?: number | null
           id?: string
           last_modified?: string
           previous_balance?: number | null
@@ -60,7 +60,7 @@ export interface Database {
         }
         Insert: {
           created_at?: string
-          id?: number
+          id: number
           is_active?: boolean | null
           last_modified?: string
           name?: string | null
@@ -86,7 +86,7 @@ export interface Database {
         Insert: {
           account_type?: string | null
           created_at?: string
-          id?: number
+          id: number
           is_active?: boolean | null
           last_modified?: string
           name?: string | null
@@ -108,6 +108,7 @@ export interface Database {
           deposit_date: string
           deposit_type: Database["public"]["Enums"]["DepositType"]
           id: string
+          is_closed: boolean
           last_modified: string
           notes: string | null
         }
@@ -116,7 +117,8 @@ export interface Database {
           created_at?: string
           deposit_date: string
           deposit_type?: Database["public"]["Enums"]["DepositType"]
-          id: string
+          id?: string
+          is_closed?: boolean
           last_modified?: string
           notes?: string | null
         }
@@ -126,6 +128,7 @@ export interface Database {
           deposit_date?: string
           deposit_type?: Database["public"]["Enums"]["DepositType"]
           id?: string
+          is_closed?: boolean
           last_modified?: string
           notes?: string | null
         }
@@ -182,7 +185,7 @@ export interface Database {
         }
         Insert: {
           created_at?: string
-          id?: number
+          id: number
           language?: Database["public"]["Enums"]["Language"]
           last_modified?: string
           quick_links?: Json | null
@@ -269,7 +272,7 @@ export interface Database {
           deposit_date?: string | null
           deposit_id?: string | null
           description_notes?: string | null
-          id: string
+          id?: string
           income_expense?: Database["public"]["Enums"]["IncomeExpense"]
           last_modified?: string
           member_id?: string | null
@@ -355,6 +358,12 @@ export interface Database {
       }
     }
     Views: {
+      deposit_amount_view: {
+        Row: {
+          net_income: number | null
+        }
+        Relationships: []
+      }
       googlesheetview: {
         Row: {
           amount: number | null

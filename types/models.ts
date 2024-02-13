@@ -3,6 +3,8 @@ import { PostgrestSingleResponse } from "@supabase/supabase-js";
 
 export type Department = Tables<"departments">;
 
+export type Deposit = Tables<"deposits">;
+
 export type Category = Tables<"categories">;
 
 export type Member = Tables<"members">;
