@@ -32,6 +32,7 @@ import Layout from "@/components/Layout";
 import { Session } from "@supabase/supabase-js";
 import formatDate from "@/utils/formatDate";
 import addCommasToAmount from "@/utils/addCommasToAmount";
+import supabaseDate from "@/utils/supabaseDate";
 
 type mantineSelectData = {
 	value: string;
@@ -154,13 +155,14 @@ const NewRecord = ({
 			invalid_type_error: "That's not a date!",
 		}),
 		description_notes: z.string().optional(),
-		deposit_id: z.string().uuid(),
+		deposit_id: z.string().uuid().optional(),
 		deposit_date: z
 			.date({
 				required_error: "Please select a date and time",
 				invalid_type_error: "That's not a date!",
 			})
-			.or(z.string().nullable()),
+			.or(z.string().nullable())
+			.optional(),
 		// status: z.enum(["deposited", "recorded"]),
 	});
 
@@ -191,6 +193,7 @@ const NewRecord = ({
 		var newData = _.cloneDeep(values);
 		console.log(values);
 
+		newData.date = supabaseDate(newData.date);
 		newData.category_id = parseInt(newData.category_id);
 		newData.department_id = parseInt(newData.department_id);
 		newData.status = "recorded";
@@ -214,11 +217,23 @@ const NewRecord = ({
 		}
 
 		const previousDate = formatDate(data[0].date);
+		const isVenmo =
+			data[0].payment_type.toLowerCase() == "venmo" ? "venmo" : "cash";
+		const depositInfo = {
+			id: data[0].deposit_id,
+			date: formatDate(data[0].deposit_date),
+		};
 
 		tesoreriaForm.reset();
-		//@ts-ignore
-		tesoreriaForm.setValues({ category_id: null });
-		tesoreriaForm.setValues({ date: new Date(previousDate) });
+		tesoreriaForm.setValues({
+			//@ts-ignore
+			category_id: null,
+			date: new Date(previousDate),
+			payment_type: isVenmo,
+			deposit_id: depositInfo.id,
+			//@ts-ignore
+			deposit_date: new Date(formatDate(depositInfo.date)) as string,
+		});
 		setShowMemberDropdown(false);
 		setShowDeptDropdown(false);
 		setBtnIsDisabled(false);
@@ -500,7 +515,11 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
 		] = await Promise.all([
 			supabase.from("departments").select("*"),
 			supabase.from("categories").select("*"),
-			supabase.from("members").select("*").eq("is_active", "true"),
+			supabase
+				.from("members")
+				.select("*")
+				.eq("is_active", "true")
+				.order("full_name", { ascending: true }),
 			supabase.from("deposits").select("*").eq("is_closed", false),
 		]);
 
