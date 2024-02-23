@@ -53,7 +53,7 @@ async function createNewRecord(
 		res.status(500).json({
 			data: null,
 			error: newRecordResponse.error,
-			message: newRecordResponse.error.toString(),
+			message: newRecordResponse.error.message,
 		});
 	}
 }

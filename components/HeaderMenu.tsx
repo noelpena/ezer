@@ -13,6 +13,7 @@ import Image from "next/image";
 import classes from "@/styles/HeaderMenu.module.css";
 import { MouseEventHandler } from "react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 const links = [
 	{ link: "/view/records", label: "View Records" },
@@ -47,6 +48,7 @@ type AppProps = {
 
 const HeaderMenu = ({ isLoggedIn, handleSignOut }: AppProps) => {
 	const [opened, { toggle }] = useDisclosure(false);
+	const router = useRouter();
 
 	const items = links.map((link) => {
 		const menuItems = link.links?.map((item) => (
@@ -120,7 +122,12 @@ const HeaderMenu = ({ isLoggedIn, handleSignOut }: AppProps) => {
 						</Button>
 					) : (
 						<Group visibleFrom="sm">
-							<Button variant="filled">Log in</Button>
+							<Button
+								variant="filled"
+								onClick={() => router.push("/")}
+							>
+								Login
+							</Button>
 							<Button>Sign up</Button>
 						</Group>
 					)}

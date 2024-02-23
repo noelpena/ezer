@@ -29,7 +29,11 @@ async function createNewDeposit(
 	res: NextApiResponse<Data>
 ) {
 	const supabase = createApiRouteClient(req, res);
-	const body = JSON.parse(req.body);
+
+	let body = req.body;
+	if (typeof req.body === "string") {
+		body = JSON.parse(req.body);
+	}
 	body.id = uuidv4();
 
 	const newDepositResponse: Supabase_Response<Record> = await supabase
@@ -47,7 +51,7 @@ async function createNewDeposit(
 		res.status(500).json({
 			data: null,
 			error: newDepositResponse.error,
-			message: newDepositResponse.error.toString(),
+			message: newDepositResponse.error.message,
 		});
 	}
 }

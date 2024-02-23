@@ -22,40 +22,40 @@ const Login = ({ session }: AppProps) => {
 
 	const supabase = createSupabaseFrontendClient();
 
-	const signIn = async () => {
-		const { error } = await supabase.auth.signInWithPassword({
-			email: "noelp.wd@gmail.com",
-			password: "passpass",
-		});
+	// const signIn = async () => {
+	// 	const { error } = await supabase.auth.signInWithPassword({
+	// 		email: "noelp.wd@gmail.com",
+	// 		password: "passpass",
+	// 	});
 
-		const {
-			//@ts-ignore
-			data: { newSesh },
-		} = await supabase.auth.getSession();
-		setSesh(newSesh);
-	};
+	// 	const {
+	// 		//@ts-ignore
+	// 		data: { newSesh },
+	// 	} = await supabase.auth.getSession();
+	// 	setSesh(newSesh);
+	// };
 
-	const signUp = async (event: any) => {
-		const formData = new FormData(event.target);
-		const email = formData.get("email") as string;
-		const password = formData.get("password") as string;
+	// const signUp = async (event: any) => {
+	// 	const formData = new FormData(event.target);
+	// 	const email = formData.get("email") as string;
+	// 	const password = formData.get("password") as string;
 
-		const { error } = await supabase.auth.signUp({
-			email: "noelp.wd+testingsupabase@gmail.com",
-			password: "passpass",
-			options: {
-				emailRedirectTo: `${location.origin}/auth/callback`,
-			},
-		});
+	// 	const { error } = await supabase.auth.signUp({
+	// 		email: "noelp.wd+testingsupabase@gmail.com",
+	// 		password: "passpass",
+	// 		options: {
+	// 			emailRedirectTo: `${location.origin}/auth/callback`,
+	// 		},
+	// 	});
 
-		if (error) {
-			return redirect("/login?message=Could not authenticate user");
-		}
+	// 	if (error) {
+	// 		return redirect("/login?message=Could not authenticate user");
+	// 	}
 
-		return redirect(
-			"/login?message=Check email to continue sign in process"
-		);
-	};
+	// 	return redirect(
+	// 		"/login?message=Check email to continue sign in process"
+	// 	);
+	// };
 
 	const signOut = async () => {
 		await supabase.auth.signOut();
@@ -71,10 +71,10 @@ const Login = ({ session }: AppProps) => {
 				providers={[]}
 				showLinks={false}
 			/>
-			<button onClick={signIn}>SIGN IN</button>
+			{/* <button onClick={signIn}>SIGN IN</button>
 			<br></br>
 			<button onClick={signOut}>SIGNOUT</button>
-			<br />
+			<br /> */}
 			<br />
 			{sesh !== null ? "I'm logged in" : "Not logged in"}
 		</>

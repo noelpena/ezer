@@ -1,8 +1,9 @@
--   [ ] Add loading to form until after submission completes. Possibly disable fields
+-   [x] Add loading to form until after submission completes. Possibly disable fields
+-   [ ] Add loading mantine notification on forms
 -   [ ] Add greeting and name to header menu
 -   [ ] Add mobile menu (drawer in Mantine)
--   [ ] RLS in supabase? Roles?
+-   [ ] RLS in supabase? Roles? - in progress
 -   [ ] remote Doubleclick on form
--   [ ] /new/record and /new/deposit instead of /record/new
+-   [x] /new/record and /new/deposit instead of /record/new
 -   [ ] Permissions
 -   [ ] Preference of language

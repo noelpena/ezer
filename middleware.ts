@@ -1,13 +1,19 @@
-import { NextResponse, NextRequest } from "next/server";
-import { createSupabaseReqResClient } from "./utils/supabase";
+import { NextRequest } from "next/server";
+import { updateSession } from "./utils/supabase";
 
 export async function middleware(req: NextRequest) {
-	const res = NextResponse.next();
-
-	// const supabase = createSupabaseReqResClient(req, res);
-
-	// const sesh = await supabase.auth.getSession();
-	// console.log("sesh", sesh);
-
-	return res;
+	return await updateSession(req);
 }
+
+export const config = {
+	matcher: [
+		/*
+		 * Match all request paths except for the ones starting with:
+		 * - _next/static (static files)
+		 * - _next/image (image optimization files)
+		 * - favicon.ico (favicon file)
+		 * Feel free to modify this pattern to include more paths.
+		 */
+		"/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+	],
+};

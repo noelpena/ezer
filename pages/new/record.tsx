@@ -155,14 +155,15 @@ const NewRecord = ({
 			invalid_type_error: "That's not a date!",
 		}),
 		description_notes: z.string().optional(),
-		deposit_id: z.string().uuid().optional(),
+		deposit_id: z.string().uuid().nullable(),
 		deposit_date: z
 			.date({
 				required_error: "Please select a date and time",
 				invalid_type_error: "That's not a date!",
 			})
-			.or(z.string().nullable())
-			.optional(),
+			.nullable()
+			.or(z.string().nullable()),
+		// .nullable()
 		// status: z.enum(["deposited", "recorded"]),
 	});
 
@@ -177,8 +178,8 @@ const NewRecord = ({
 			payment_type: "cash",
 			date: new Date(),
 			description_notes: "",
-			deposit_id: "",
-			deposit_date: "",
+			deposit_id: null,
+			deposit_date: null,
 			// status: "recorded",
 		},
 	});
@@ -214,29 +215,31 @@ const NewRecord = ({
 		}
 		if (data !== null) {
 			await add2GoogleSheet(data[0]);
+
+			const previousDate = formatDate(data[0].date);
+			const isVenmo =
+				data[0].payment_type.toLowerCase() == "venmo"
+					? "venmo"
+					: "cash";
+			const depositInfo = {
+				id: data[0].deposit_id,
+				date: formatDate(data[0].deposit_date),
+			};
+
+			tesoreriaForm.reset();
+			tesoreriaForm.setValues({
+				//@ts-ignore
+				category_id: null,
+				date: new Date(previousDate),
+				payment_type: isVenmo,
+				deposit_id: depositInfo.id,
+				//@ts-ignore
+				deposit_date: new Date(formatDate(depositInfo.date)) as string,
+			});
+			setShowMemberDropdown(false);
+			setShowDeptDropdown(false);
+			setBtnIsDisabled(false);
 		}
-
-		const previousDate = formatDate(data[0].date);
-		const isVenmo =
-			data[0].payment_type.toLowerCase() == "venmo" ? "venmo" : "cash";
-		const depositInfo = {
-			id: data[0].deposit_id,
-			date: formatDate(data[0].deposit_date),
-		};
-
-		tesoreriaForm.reset();
-		tesoreriaForm.setValues({
-			//@ts-ignore
-			category_id: null,
-			date: new Date(previousDate),
-			payment_type: isVenmo,
-			deposit_id: depositInfo.id,
-			//@ts-ignore
-			deposit_date: new Date(formatDate(depositInfo.date)) as string,
-		});
-		setShowMemberDropdown(false);
-		setShowDeptDropdown(false);
-		setBtnIsDisabled(false);
 	};
 
 	const handleCategoryClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -297,6 +300,7 @@ const NewRecord = ({
 					deposit_date: new Date(
 						formatDate(deposit.deposit_date)
 					) as string,
+					//@ts-ignore
 					deposit_id: deposit.id,
 				});
 			}
@@ -448,6 +452,7 @@ const NewRecord = ({
 							label="Date"
 							placeholder="Date"
 							size="lg"
+							firstDayOfWeek={0}
 							{...tesoreriaForm.getInputProps("date")}
 						/>
 
@@ -491,17 +496,6 @@ export default NewRecord;
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
 	const supabase = createSupabaseReqResClient(ctx);
 
-	const { data, error } = await supabase.auth.getUser();
-
-	if (error || !data) {
-		return {
-			redirect: {
-				destination: "/",
-				permanent: false,
-			},
-		};
-	}
-
 	const {
 		data: { session },
 	} = await supabase.auth.getSession();
@@ -527,7 +521,6 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
 		const { data: cat_data, error: cat_error } = category_res;
 		const { data: member_data, error: member_error } = member_res;
 		const { data: deposit_data, error: deposit_error } = deposit_res;
-
 		return {
 			props: { session, dept_data, cat_data, member_data, deposit_data },
 		};

@@ -201,40 +201,32 @@ export type Database = {
           theme?: string | null
           user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "preferences_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          }
-        ]
+        Relationships: []
       }
       profiles: {
         Row: {
           avatar_url: string | null
+          email_address: string | null
           full_name: string | null
           id: string
+          role: Database["public"]["Enums"]["Role"]
           updated_at: string | null
-          username: string | null
-          website: string | null
         }
         Insert: {
           avatar_url?: string | null
+          email_address?: string | null
           full_name?: string | null
           id: string
+          role?: Database["public"]["Enums"]["Role"]
           updated_at?: string | null
-          username?: string | null
-          website?: string | null
         }
         Update: {
           avatar_url?: string | null
+          email_address?: string | null
           full_name?: string | null
           id?: string
+          role?: Database["public"]["Enums"]["Role"]
           updated_at?: string | null
-          username?: string | null
-          website?: string | null
         }
         Relationships: [
           {
@@ -326,36 +318,6 @@ export type Database = {
           }
         ]
       }
-      users: {
-        Row: {
-          created_at: string
-          email: string
-          id: string
-          last_modified: string
-          name: string
-          profile_image: string | null
-          username: string
-        }
-        Insert: {
-          created_at?: string
-          email: string
-          id: string
-          last_modified?: string
-          name: string
-          profile_image?: string | null
-          username: string
-        }
-        Update: {
-          created_at?: string
-          email?: string
-          id?: string
-          last_modified?: string
-          name?: string
-          profile_image?: string | null
-          username?: string
-        }
-        Relationships: []
-      }
     }
     Views: {
       deposit_amount_view: {
@@ -370,6 +332,8 @@ export type Database = {
           category_name: string | null
           date: string | null
           department_name: string | null
+          deposit_date: string | null
+          deposit_id: string | null
           description_notes: string | null
           entrada_salida: string | null
           id: string | null
@@ -378,17 +342,29 @@ export type Database = {
           status: Database["public"]["Enums"]["Status"] | null
           timestamp: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "records_deposit_id_fkey"
+            columns: ["deposit_id"]
+            isOneToOne: false
+            referencedRelation: "deposits"
+            referencedColumns: ["id"]
+          }
+        ]
       }
     }
     Functions: {
-      [_ in never]: never
+      get_user_role: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
     }
     Enums: {
       DepositType: "bank" | "venmo"
       IncomeExpense: "income" | "expense"
       Language: "english" | "spanish"
       PaymentType: "cash" | "check" | "debitCard" | "venmo"
+      Role: "admin" | "read_only" | "editor"
       Status: "deposited" | "recorded"
     }
     CompositeTypes: {
