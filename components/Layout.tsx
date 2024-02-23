@@ -28,7 +28,7 @@ export default function Layout({ children, session }: AppProps) {
 		return () => {
 			data.subscription.unsubscribe();
 		};
-	}, []);
+	});
 
 	return (
 		<>

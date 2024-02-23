@@ -37,7 +37,7 @@ type NewDepositProps = {
 	deposit_data: Deposit[];
 };
 
-export default function deposit({ session, deposit_data }: NewDepositProps) {
+export default function NewDeposit({ session, deposit_data }: NewDepositProps) {
 	const [btnIsDisabled, setBtnIsDisabled] = useState<boolean>(false);
 	const router = useRouter();
 

@@ -10,7 +10,10 @@ type EditDepositProps = {
 	deposit_data: Deposit[];
 };
 
-export default function deposit({ session, deposit_data }: EditDepositProps) {
+export default function EditDeposit({
+	session,
+	deposit_data,
+}: EditDepositProps) {
 	return (
 		<>
 			<Head>

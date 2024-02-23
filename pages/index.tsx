@@ -43,7 +43,7 @@ const Home = ({ session }: AppProps) => {
 		return () => {
 			data.subscription.unsubscribe();
 		};
-	}, []);
+	});
 
 	return (
 		<>
@@ -71,7 +71,7 @@ const Home = ({ session }: AppProps) => {
 				</>
 			) : (
 				<Layout session={sesh}>
-					<p>You're already logged in.</p>
+					<p>You are already logged in.</p>
 				</Layout>
 			)}
 		</>

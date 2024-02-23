@@ -15,7 +15,7 @@ const Dashboard = ({ session }: AppProps) => {
 				<title>Ezer | Dashboard</title>
 			</Head>
 			<Layout session={session}>
-				<p>You're already logged in.</p>
+				<p>You are already logged in.</p>
 			</Layout>
 		</>
 	);
