@@ -30,6 +30,7 @@ import Layout from "@/components/Layout";
 
 import { Session } from "@supabase/supabase-js";
 import formatDate from "@/utils/formatDate";
+import { useRouter } from "next/router";
 
 type NewDepositProps = {
 	session: Session;
@@ -38,6 +39,7 @@ type NewDepositProps = {
 
 export default function deposit({ session, deposit_data }: NewDepositProps) {
 	const [btnIsDisabled, setBtnIsDisabled] = useState<boolean>(false);
+	const router = useRouter();
 
 	const rows = deposit_data.map((deposit) => (
 		<Table.Tr key={deposit.id}>
@@ -47,8 +49,20 @@ export default function deposit({ session, deposit_data }: NewDepositProps) {
 				${addCommasToAmount((deposit.amount / 100).toFixed(2))}
 			</Table.Td>
 			<Table.Td>{deposit.notes}</Table.Td>
+			<Table.Td>
+				<Button
+					variant="subtle"
+					onClick={() => handleDepositEdit(deposit.id)}
+				>
+					Edit
+				</Button>
+			</Table.Td>
 		</Table.Tr>
 	));
+
+	const handleDepositEdit = (id: string) => {
+		router.push(`/edit/deposit/${id}`);
+	};
 
 	const newDepositSchema = z.object({
 		deposit_date: z.date({
@@ -112,18 +126,27 @@ export default function deposit({ session, deposit_data }: NewDepositProps) {
 				<div className="h-screen max-w-screen-lg mt-6 mb-12 mx-4">
 					{deposit_data.length > 0 && (
 						<>
-							<Title order={2}>Current Open Deposits</Title>
-							<Table>
+							<Title order={2}>Open Deposits</Title>
+							<Table striped withTableBorder>
 								<Table.Thead>
 									<Table.Tr>
 										<Table.Th>Deposit Type</Table.Th>
 										<Table.Th>Date</Table.Th>
 										<Table.Th>Amount</Table.Th>
 										<Table.Th>Notes</Table.Th>
+										<Table.Th>Actions</Table.Th>
 									</Table.Tr>
 								</Table.Thead>
 								<Table.Tbody>{rows}</Table.Tbody>
 							</Table>
+							<br />
+							<Button
+								variant="outline"
+								color="yellow"
+								onClick={() => {}}
+							>
+								View Closed Deposits
+							</Button>
 						</>
 					)}
 

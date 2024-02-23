@@ -26,17 +26,6 @@ export default Dashboard;
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
 	const supabase = createSupabaseReqResClient(ctx);
 
-	const { data, error } = await supabase.auth.getUser();
-
-	if (error || !data) {
-		return {
-			redirect: {
-				destination: "/",
-				permanent: false,
-			},
-		};
-	}
-
 	const {
 		data: { session },
 	} = await supabase.auth.getSession();
