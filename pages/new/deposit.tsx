@@ -98,7 +98,7 @@ export default function NewDeposit({ session, deposit_data }: NewDepositProps) {
 
 		values.amount = parseInt((parseFloat(values.amount) * 100).toFixed(2));
 
-		const newDepositResponse = await fetch("/api/new/deposit", {
+		const newDepositResponse = await fetch("/api/deposit", {
 			method: "POST",
 			body: JSON.stringify(values),
 		});
@@ -190,6 +190,7 @@ export default function NewDeposit({ session, deposit_data }: NewDepositProps) {
 								prefix="$"
 								min={0}
 								defaultValue={0.0}
+								thousandSeparator=","
 								size="lg"
 								{...depositForm.getInputProps("amount")}
 							/>

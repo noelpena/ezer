@@ -202,7 +202,7 @@ const NewRecord = ({
 			(parseFloat(newData.amount) * 100).toFixed(2)
 		);
 
-		const newRecordResponse = await fetch("/api/new/record", {
+		const newRecordResponse = await fetch("/api/record", {
 			method: "POST",
 			body: JSON.stringify(newData),
 		});

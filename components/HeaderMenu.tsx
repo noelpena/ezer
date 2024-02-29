@@ -16,7 +16,15 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 
 const links = [
-	{ link: "/view/records", label: "View Records" },
+	// { link: "/view/records", label: "View Records" },
+	{
+		link: "#",
+		label: "View",
+		links: [
+			{ link: "/view/records", label: "Records" },
+			{ link: "/view/deposits", label: "Deposits" },
+		],
+	},
 	{
 		link: "#",
 		label: "Create New",
