@@ -1,7 +1,9 @@
 import Layout from "@/components/Layout";
 import { Deposit, Supabase_Response } from "@/types/models";
 import addCommasToAmount from "@/utils/addCommasToAmount";
+import formatDate from "@/utils/formatDate";
 import { createSupabaseReqResClient } from "@/utils/supabase";
+import supabaseDate from "@/utils/supabaseDate";
 import {
 	Anchor,
 	Breadcrumbs,
@@ -55,7 +57,7 @@ export default function EditDeposit({
 		validate: zodResolver(editDepositSchema),
 		initialValues: {
 			id: depositData.id,
-			deposit_date: new Date(depositData.deposit_date),
+			deposit_date: new Date(formatDate(depositData.deposit_date)),
 			amount: depositData.amount / 100,
 			notes: depositData.notes,
 			deposit_type: depositData.deposit_type,
@@ -68,6 +70,7 @@ export default function EditDeposit({
 
 		values.amount = parseInt((parseFloat(values.amount) * 100).toFixed(2));
 		// console.log(values);
+		// values.deposit_date = supabaseDate(values.deposit_date);
 
 		const newDepositResponse = await fetch("/api/deposit/", {
 			method: "PUT",
@@ -108,7 +111,7 @@ export default function EditDeposit({
 				<title>Ezer | Edit Deposit</title>
 			</Head>
 			<Layout session={session}>
-				{/* {JSON.stringify(deposit_data)} */}
+				{JSON.stringify(deposit_data)}
 				<Breadcrumbs separator=">" mt="xs">
 					{breadCrumbItems}
 				</Breadcrumbs>

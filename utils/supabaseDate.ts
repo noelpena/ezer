@@ -1,4 +1,4 @@
-export default function formatDate(inputDate: Date) {
+export default function supabaseDate(inputDate: Date) {
 	// Extract year, month, and day from the input date
 	var year = inputDate.getFullYear();
 	var month = (inputDate.getMonth() + 1).toString().padStart(2, "0");

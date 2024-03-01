@@ -342,7 +342,7 @@ const NewRecord = ({
 					</SimpleGrid>
 
 					<form
-						className="flex flex-col gap-y-6 mt-3"
+						className="flex flex-col gap-y-6 mt-3 mb-2"
 						action=""
 						id="form-add-record"
 						onSubmit={tesoreriaForm.onSubmit((values) =>

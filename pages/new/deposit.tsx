@@ -31,6 +31,7 @@ import Layout from "@/components/Layout";
 import { Session } from "@supabase/supabase-js";
 import formatDate from "@/utils/formatDate";
 import { useRouter } from "next/router";
+import supabaseDate from "@/utils/supabaseDate";
 
 type NewDepositProps = {
 	session: Session;
@@ -97,7 +98,7 @@ export default function NewDeposit({ session, deposit_data }: NewDepositProps) {
 		setBtnIsDisabled(true);
 
 		values.amount = parseInt((parseFloat(values.amount) * 100).toFixed(2));
-
+		values.deposit_date = supabaseDate(values.deposit_date);
 		const newDepositResponse = await fetch("/api/deposit", {
 			method: "POST",
 			body: JSON.stringify(values),
@@ -113,7 +114,7 @@ export default function NewDeposit({ session, deposit_data }: NewDepositProps) {
 		//if deposit is not closed
 		// update deposit_data array to show new deposit in list
 
-		depositForm.reset();
+		router.reload();
 		setBtnIsDisabled(false);
 	};
 
