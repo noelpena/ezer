@@ -502,10 +502,10 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
 
 	try {
 		const [department_res, category_res, member_res, deposit_res]: [
-			Supabase_Response<Department>,
-			Supabase_Response<Category>,
-			Supabase_Response<Member>,
-			Supabase_Response<Deposit>
+			Supabase_Response<Department[]>,
+			Supabase_Response<Category[]>,
+			Supabase_Response<Member[]>,
+			Supabase_Response<Deposit[]>
 		] = await Promise.all([
 			supabase.from("departments").select("*"),
 			supabase.from("categories").select("*"),
@@ -521,6 +521,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
 		const { data: cat_data, error: cat_error } = category_res;
 		const { data: member_data, error: member_error } = member_res;
 		const { data: deposit_data, error: deposit_error } = deposit_res;
+
 		return {
 			props: { session, dept_data, cat_data, member_data, deposit_data },
 		};

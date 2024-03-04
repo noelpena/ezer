@@ -143,14 +143,15 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
 
 	try {
 		// not sure what to do here
-		const [deposit_res]: [Supabase_Response<Deposit>] = await Promise.all([
-			supabase
-				.from("deposits")
-				.select("*")
-				.eq("is_closed", is_closed)
-				.order("deposit_date", { ascending: false }),
-			,
-		]);
+		const [deposit_res]: [Supabase_Response<Deposit[]>, undefined] =
+			await Promise.all([
+				supabase
+					.from("deposits")
+					.select("*")
+					.eq("is_closed", is_closed)
+					.order("deposit_date", { ascending: false }),
+				,
+			]);
 
 		const { data: deposit_data, error: deposit_error } = deposit_res;
 
