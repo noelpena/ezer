@@ -3,6 +3,7 @@ import type { GetServerSidePropsContext } from "next";
 import { Session } from "@supabase/gotrue-js/src/lib/types";
 import Layout from "@/components/Layout";
 import Head from "next/head";
+import { Container } from "@mantine/core";
 
 type AppProps = {
 	session: Session | null;
@@ -15,7 +16,9 @@ const Dashboard = ({ session }: AppProps) => {
 				<title>Ezer | Dashboard</title>
 			</Head>
 			<Layout session={session}>
-				<p>You are already logged in.</p>
+				<Container>
+					<p>You are already logged in.</p>
+				</Container>
 			</Layout>
 		</>
 	);

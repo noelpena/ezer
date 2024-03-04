@@ -6,28 +6,41 @@ import {
 	Container,
 	Title,
 	Button,
+	Drawer,
+	Flex,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconChevronDown } from "@tabler/icons-react";
+import {
+	IconChevronDown,
+	IconLogout,
+	IconSwitchHorizontal,
+} from "@tabler/icons-react";
 import Image from "next/image";
 import classes from "@/styles/HeaderMenu.module.css";
 import { MouseEventHandler } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { LinksGroup } from "./NavbarLinksGroup";
 
+import {
+	IconNotes,
+	IconArticle,
+	IconClipboardData,
+	IconFilePlus,
+} from "@tabler/icons-react";
 const links = [
 	// { link: "/view/records", label: "View Records" },
 	{
-		link: "#",
 		label: "View",
+		icon: IconArticle,
 		links: [
 			{ link: "/view/records", label: "Records" },
 			{ link: "/view/deposits", label: "Deposits" },
 		],
 	},
 	{
-		link: "#",
 		label: "Create New",
+		icon: IconFilePlus,
 		links: [
 			{ link: "/new/record", label: "Record" },
 			{ link: "/new/deposit", label: "Deposit" },
@@ -36,17 +49,7 @@ const links = [
 			{ link: "/blog", label: "Balance" },
 		],
 	},
-	{ link: "/about", label: "Reports" },
-	// { link: "/pricing", label: "Pricing" },
-	// {
-	// 	link: "#2",
-	// 	label: "Support",
-	// 	links: [
-	// 		{ link: "/faq", label: "FAQ" },
-	// 		{ link: "/demo", label: "Book a demo" },
-	// 		{ link: "/forums", label: "Forums" },
-	// 	],
-	// },
+	{ link: "/about", label: "Reports", icon: IconClipboardData },
 ];
 
 type AppProps = {
@@ -56,6 +59,7 @@ type AppProps = {
 
 const HeaderMenu = ({ isLoggedIn, handleSignOut }: AppProps) => {
 	const [opened, { toggle }] = useDisclosure(false);
+	// const [opened, { open, close }] = useDisclosure(false);
 	const router = useRouter();
 
 	const items = links.map((link) => {
@@ -75,7 +79,7 @@ const HeaderMenu = ({ isLoggedIn, handleSignOut }: AppProps) => {
 				>
 					<Menu.Target>
 						<Link
-							href={link.link}
+							href={link.link || "#"}
 							className={classes.link}
 							// onClick={(event) => event.preventDefault()}
 						>
@@ -95,7 +99,7 @@ const HeaderMenu = ({ isLoggedIn, handleSignOut }: AppProps) => {
 		return (
 			<Link
 				key={link.label}
-				href={link.link}
+				href={link.link || "#"}
 				className={classes.link}
 				// onClick={(event) => event.preventDefault()}
 			>
@@ -104,6 +108,12 @@ const HeaderMenu = ({ isLoggedIn, handleSignOut }: AppProps) => {
 		);
 	});
 
+	// const mobileItems = links.map((item: any) => (
+	// 	<LinksGroup {...item} key={item.label} />
+	// ));
+	const mobileItems = links.map((item) => (
+		<LinksGroup {...item} key={item.label} />
+	));
 	return (
 		<header className={classes.header}>
 			<Container size="lg">
@@ -119,12 +129,14 @@ const HeaderMenu = ({ isLoggedIn, handleSignOut }: AppProps) => {
 						onClick={toggle}
 						size="sm"
 						hiddenFrom="sm"
+						className="order-last"
 					/>
 					{isLoggedIn ? (
 						<Button
 							variant="filled"
 							color="gray"
 							onClick={handleSignOut}
+							className="!hidden md:!block"
 						>
 							Sign out
 						</Button>
@@ -141,6 +153,26 @@ const HeaderMenu = ({ isLoggedIn, handleSignOut }: AppProps) => {
 					)}
 				</div>
 			</Container>
+			<Drawer
+				size="75%"
+				position="right"
+				opened={opened}
+				onClose={toggle}
+				title="Menu"
+			>
+				<div className="flex flex-col justify-between h-svh relative">
+					<div>{mobileItems}</div>
+					<div className={classes.footer + " relative -top-[120px]"}>
+						<Button
+							variant="subtle"
+							color="gray"
+							onClick={handleSignOut}
+						>
+							Sign out
+						</Button>
+					</div>
+				</div>
+			</Drawer>
 		</header>
 	);
 };
