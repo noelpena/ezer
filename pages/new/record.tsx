@@ -61,7 +61,7 @@ const NewRecord = ({
 		boolean | null
 	>(false);
 	const [showDeptDropdown, setShowDeptDropdown] = useState<boolean | null>(
-		false
+		true
 	);
 
 	function cat_names(cat_data: Category[]) {
@@ -237,7 +237,7 @@ const NewRecord = ({
 				deposit_date: new Date(formatDate(depositInfo.date)) as string,
 			});
 			setShowMemberDropdown(false);
-			setShowDeptDropdown(false);
+			setShowDeptDropdown(true);
 			setBtnIsDisabled(false);
 		}
 	};
@@ -307,6 +307,19 @@ const NewRecord = ({
 		});
 	};
 
+	const handleCatSearchChange = (target: string | null) => {
+		if (target) {
+			if (parseInt(target) === 1) {
+				setShowMemberDropdown(true);
+				setShowDeptDropdown(false);
+			} else {
+				setShowMemberDropdown(false);
+				setShowDeptDropdown(true);
+			}
+			tesoreriaForm.setValues({ category_id: target });
+		}
+	};
+
 	return (
 		<>
 			<Head>
@@ -317,7 +330,7 @@ const NewRecord = ({
 					<SimpleGrid cols={{ sm: 3 }}>
 						<Button
 							variant="filled"
-							size="xl"
+							size="lg"
 							onClick={handleCategoryClick}
 							className="p-8"
 						>
@@ -326,7 +339,7 @@ const NewRecord = ({
 
 						<Button
 							variant="light"
-							size="xl"
+							size="lg"
 							onClick={handleCategoryClick}
 						>
 							Ofrenda
@@ -334,7 +347,7 @@ const NewRecord = ({
 
 						<Button
 							variant="outline"
-							size="xl"
+							size="lg"
 							onClick={handleCategoryClick}
 						>
 							Other
@@ -355,10 +368,8 @@ const NewRecord = ({
 							data={cat_names(cat_data)}
 							size="lg"
 							clearable={true}
-							// searchable
-							// onSearchChange={handleCatSearchChange}
-							// searchValue={cat}
 							{...tesoreriaForm.getInputProps("category_id")}
+							onChange={handleCatSearchChange}
 						/>
 
 						<Select

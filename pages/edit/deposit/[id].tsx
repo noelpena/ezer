@@ -8,6 +8,7 @@ import {
 	Anchor,
 	Breadcrumbs,
 	Button,
+	Container,
 	Flex,
 	NumberInput,
 	Select,
@@ -17,6 +18,7 @@ import {
 import { DateInput } from "@mantine/dates";
 import { useForm, zodResolver } from "@mantine/form";
 import { Session } from "@supabase/supabase-js";
+import _ from "lodash";
 import Head from "next/head";
 import { GetServerSidePropsContext } from "next/types";
 import { useState } from "react";
@@ -67,14 +69,16 @@ export default function EditDeposit({
 
 	const submitEditDeposit = async (values: any) => {
 		setBtnIsDisabled(true);
-
-		values.amount = parseInt((parseFloat(values.amount) * 100).toFixed(2));
-		// console.log(values);
-		// values.deposit_date = supabaseDate(values.deposit_date);
+		var newData = _.cloneDeep(values);
+		newData.amount = parseInt(
+			(parseFloat(newData.amount) * 100).toFixed(2)
+		);
+		// console.log(newData);
+		// newData.deposit_date = supabaseDate(newData.deposit_date);
 
 		const newDepositResponse = await fetch("/api/deposit/", {
 			method: "PUT",
-			body: JSON.stringify(values),
+			body: JSON.stringify(newData),
 		});
 
 		const { data, error } = await newDepositResponse.json();
@@ -85,7 +89,7 @@ export default function EditDeposit({
 		// // handle error, add logging
 
 		// setDepositData(data[0]);
-		depositForm.setValues({ ...values, amount: values.amount / 100 });
+		depositForm.setValues({ ...newData, amount: newData.amount / 100 });
 
 		setBtnIsDisabled(false);
 	};
@@ -111,91 +115,94 @@ export default function EditDeposit({
 				<title>Ezer | Edit Deposit</title>
 			</Head>
 			<Layout session={session}>
-				{JSON.stringify(deposit_data)}
-				<Breadcrumbs separator=">" mt="xs">
-					{breadCrumbItems}
-				</Breadcrumbs>
-				<Flex className="mt-8" direction="column">
-					<Title order={2}>Edit Deposit</Title>
-					<form
-						className="flex flex-col gap-y-6 mt-3"
-						id="form-add-record"
-						onSubmit={depositForm.onSubmit((values) =>
-							submitEditDeposit(values)
-						)}
-					>
-						<DateInput
-							valueFormat="MM/DD/YYYY"
-							label="Deposit Date"
-							placeholder="Date"
-							size="lg"
-							{...depositForm.getInputProps("deposit_date")}
-						/>
-						<Select
-							label="Deposit Type"
-							placeholder=""
-							data={[
-								{
-									value: "bank",
-									label: "Bank",
-								},
-								{
-									value: "venmo",
-									label: "Venmo",
-								},
-							]}
-							value="Entrada"
-							size="lg"
-							{...depositForm.getInputProps("deposit_type")}
-						/>
+				{/* {JSON.stringify(deposit_data)} */}
+				<Container>
+					<Breadcrumbs separator=">" mt="xs">
+						{breadCrumbItems}
+					</Breadcrumbs>
+					<Flex className="mt-8" direction="column">
+						<Title order={2}>Edit Deposit</Title>
 
-						<NumberInput
-							label="Amount"
-							placeholder="Dollars"
-							prefix="$"
-							min={0}
-							defaultValue={0.0}
-							thousandSeparator=","
-							size="lg"
-							{...depositForm.getInputProps("amount")}
-						/>
-
-						<Select
-							label="Is Deposit Closed?"
-							placeholder=""
-							data={[
-								{
-									value: "true",
-									label: "Yes",
-								},
-								{
-									value: "false",
-									label: "No",
-								},
-							]}
-							size="lg"
-							{...depositForm.getInputProps("is_closed")}
-						/>
-
-						<Textarea
-							label="Notes"
-							placeholder=""
-							size="lg"
-							rows={2}
-							{...depositForm.getInputProps("notes")}
-						/>
-
-						<Button
-							variant="filled"
-							size="lg"
-							id="submit-btn"
-							type="submit"
-							loading={btnIsDisabled}
+						<form
+							className="flex flex-col gap-y-6 mt-3"
+							id="form-add-record"
+							onSubmit={depositForm.onSubmit((values) =>
+								submitEditDeposit(values)
+							)}
 						>
-							Submit
-						</Button>
-					</form>
-				</Flex>
+							<DateInput
+								valueFormat="MM/DD/YYYY"
+								label="Deposit Date"
+								placeholder="Date"
+								size="lg"
+								{...depositForm.getInputProps("deposit_date")}
+							/>
+							<Select
+								label="Deposit Type"
+								placeholder=""
+								data={[
+									{
+										value: "bank",
+										label: "Bank",
+									},
+									{
+										value: "venmo",
+										label: "Venmo",
+									},
+								]}
+								value="Entrada"
+								size="lg"
+								{...depositForm.getInputProps("deposit_type")}
+							/>
+
+							<NumberInput
+								label="Amount"
+								placeholder="Dollars"
+								prefix="$"
+								min={0}
+								defaultValue={0.0}
+								thousandSeparator=","
+								size="lg"
+								{...depositForm.getInputProps("amount")}
+							/>
+
+							<Select
+								label="Is Deposit Closed?"
+								placeholder=""
+								data={[
+									{
+										value: "true",
+										label: "Yes",
+									},
+									{
+										value: "false",
+										label: "No",
+									},
+								]}
+								size="lg"
+								{...depositForm.getInputProps("is_closed")}
+							/>
+
+							<Textarea
+								label="Notes"
+								placeholder=""
+								size="lg"
+								rows={2}
+								{...depositForm.getInputProps("notes")}
+							/>
+
+							<Button
+								variant="filled"
+								size="lg"
+								id="submit-btn"
+								type="submit"
+								loading={btnIsDisabled}
+							>
+								Submit
+							</Button>
+						</form>
+					</Flex>
+				</Container>
 			</Layout>
 		</>
 	);

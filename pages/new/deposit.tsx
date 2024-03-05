@@ -32,6 +32,7 @@ import { Session } from "@supabase/supabase-js";
 import formatDate from "@/utils/formatDate";
 import { useRouter } from "next/router";
 import supabaseDate from "@/utils/supabaseDate";
+import _ from "lodash";
 
 type NewDepositProps = {
 	session: Session;
@@ -96,12 +97,15 @@ export default function NewDeposit({ session, deposit_data }: NewDepositProps) {
 
 	const submitNewDeposit = async (values: any) => {
 		setBtnIsDisabled(true);
+		var newData = _.cloneDeep(values);
+		newData.amount = parseInt(
+			(parseFloat(newData.amount) * 100).toFixed(2)
+		);
+		newData.deposit_date = supabaseDate(newData.deposit_date);
 
-		values.amount = parseInt((parseFloat(values.amount) * 100).toFixed(2));
-		values.deposit_date = supabaseDate(values.deposit_date);
 		const newDepositResponse = await fetch("/api/deposit", {
 			method: "POST",
-			body: JSON.stringify(values),
+			body: JSON.stringify(newData),
 		});
 
 		const { data, error } = await newDepositResponse.json();

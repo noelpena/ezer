@@ -4,9 +4,9 @@ import {
 	Box,
 	Collapse,
 	ThemeIcon,
-	Text,
 	UnstyledButton,
 	rem,
+	NavLink,
 } from "@mantine/core";
 import { IconCalendarStats, IconChevronRight } from "@tabler/icons-react";
 import classes from "@/styles/NavbarLinksGroup.module.css";
@@ -27,15 +27,13 @@ export function LinksGroup({
 	const hasLinks = Array.isArray(links);
 	const [opened, setOpened] = useState(initiallyOpened || false);
 	const items = (hasLinks ? links : []).map((link) => (
-		<Text<"a">
-			component="a"
+		<NavLink
+			// component="a"
 			className={classes.link}
 			href={link.link}
 			key={link.label}
-			onClick={(event) => event.preventDefault()}
-		>
-			{link.label}
-		</Text>
+			label={link.label}
+		/>
 	));
 
 	return (
@@ -64,25 +62,11 @@ export function LinksGroup({
 					)}
 				</Group>
 			</UnstyledButton>
-			{hasLinks ? <Collapse in={opened}>{items}</Collapse> : null}
+			{hasLinks ? (
+				<Collapse in={opened} className="overflow-hidden">
+					{items}
+				</Collapse>
+			) : null}
 		</>
-	);
-}
-
-const mockdata = {
-	label: "Releases",
-	icon: IconCalendarStats,
-	links: [
-		{ label: "Upcoming releases", link: "/" },
-		{ label: "Previous releases", link: "/" },
-		{ label: "Releases schedule", link: "/" },
-	],
-};
-
-export function NavbarLinksGroup() {
-	return (
-		<Box mih={220} p="md">
-			<LinksGroup {...mockdata} />
-		</Box>
 	);
 }

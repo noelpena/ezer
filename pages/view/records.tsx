@@ -7,7 +7,7 @@ import "@mantine/core/styles.layer.css";
 import "@mantine/dates/styles.layer.css";
 
 import type { GetServerSidePropsContext } from "next/types";
-import type { Deposit, Supabase_Response } from "@/types/models";
+import type { Record, Supabase_Response } from "@/types/models";
 
 import capitalize from "@/utils/capitalize";
 import addCommasToAmount from "@/utils/addCommasToAmount";
@@ -19,30 +19,28 @@ import { useRouter } from "next/router";
 
 type ViewDepositProps = {
 	session: Session;
-	deposit_data: Deposit[];
-	is_closed: boolean;
+	record_data: Record[];
 };
 
-export default function ViewDeposit({
+export default function ViewRecords({
 	session,
-	deposit_data,
-	is_closed,
+	record_data,
 }: ViewDepositProps) {
 	const router = useRouter();
 
-	const rows = deposit_data.map((deposit) => (
-		<Table.Tr key={deposit.id}>
-			<Table.Td>{capitalize(deposit.deposit_type)}</Table.Td>
-			<Table.Td>{formatDate(deposit.deposit_date)}</Table.Td>
+	const rows = record_data.map((record) => (
+		<Table.Tr key={record.id}>
+			<Table.Td>{capitalize(record.category_id)}</Table.Td>
+			<Table.Td>{formatDate(record.deposit_date)}</Table.Td>
 			<Table.Td>
-				${addCommasToAmount((deposit.amount / 100).toFixed(2))}
+				${addCommasToAmount((record.amount / 100).toFixed(2))}
 			</Table.Td>
-			<Table.Td>{deposit.notes}</Table.Td>
-			<Table.Td>{deposit.is_closed ? "Yes" : "No"}</Table.Td>
+			<Table.Td>{record.notes}</Table.Td>
+			<Table.Td>{record.is_closed ? "Yes" : "No"}</Table.Td>
 			<Table.Td>
 				<Button
 					variant="subtle"
-					onClick={() => handleDepositEdit(deposit.id)}
+					onClick={() => handleRecordEdit(record.id)}
 				>
 					Edit
 				</Button>
@@ -64,7 +62,7 @@ export default function ViewDeposit({
 					<Title order={2}>
 						{is_closed ? "Closed" : "Open"} Deposits
 					</Title>
-					{deposit_data.length > 0 ? (
+					{record_data.length > 0 ? (
 						<>
 							<Table striped withTableBorder>
 								<Table.Thead>
@@ -142,16 +140,15 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
 	} = await supabase.auth.getSession();
 
 	try {
-		const deposit_res: Supabase_Response<Deposit[]> = await supabase
-			.from("deposits")
+		const record_res: Supabase_Response<Record[]> = await supabase
+			.from("records_view")
 			.select("*")
-			.eq("is_closed", is_closed)
-			.order("deposit_date", { ascending: false });
+			.order("date", { ascending: false });
 
-		const { data: deposit_data, error: deposit_error } = deposit_res;
+		const { data: record_data, error: record_error } = record_res;
 
 		return {
-			props: { session, deposit_data, is_closed },
+			props: { session, record_data, is_closed },
 		};
 	} catch (error) {
 		console.error(

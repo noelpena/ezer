@@ -7,3 +7,4 @@
 -   [x] /new/record and /new/deposit instead of /record/new
 -   [ ] Permissions
 -   [ ] Preference of language
+-   [ ] Add sum for open deposits on deposit list

@@ -8,6 +8,7 @@ import {
 	Button,
 	Drawer,
 	Flex,
+	NavLink,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import {
@@ -54,7 +55,7 @@ const links = [
 
 type AppProps = {
 	isLoggedIn: boolean;
-	handleSignOut: MouseEventHandler<HTMLButtonElement>;
+	handleSignOut: MouseEventHandler<HTMLButtonElement | HTMLElement>;
 };
 
 const HeaderMenu = ({ isLoggedIn, handleSignOut }: AppProps) => {
@@ -108,9 +109,6 @@ const HeaderMenu = ({ isLoggedIn, handleSignOut }: AppProps) => {
 		);
 	});
 
-	// const mobileItems = links.map((item: any) => (
-	// 	<LinksGroup {...item} key={item.label} />
-	// ));
 	const mobileItems = links.map((item) => (
 		<LinksGroup {...item} key={item.label} />
 	));
@@ -158,18 +156,26 @@ const HeaderMenu = ({ isLoggedIn, handleSignOut }: AppProps) => {
 				position="right"
 				opened={opened}
 				onClose={toggle}
-				title="Menu"
+				padding="0"
+				withCloseButton={false}
+				withinPortal={true}
 			>
-				<div className="flex flex-col justify-between h-svh relative">
+				<div className="flex flex-col justify-between h-svh">
+					{/* <div> */}
 					<div>{mobileItems}</div>
-					<div className={classes.footer + " relative -top-[120px]"}>
-						<Button
-							variant="subtle"
+					{/* <div className={classes.footer + " relative -top-[120px]"}> */}
+					<div>
+						<NavLink
+							active={true}
+							variant="filled"
 							color="gray"
 							onClick={handleSignOut}
-						>
-							Sign out
-						</Button>
+							label="Sign out"
+							className="bg-gray-500 hover:bg-gray-300"
+							leftSection={
+								<IconLogout stroke={1.5} size="1.25rem" />
+							}
+						/>
 					</div>
 				</div>
 			</Drawer>

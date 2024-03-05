@@ -55,7 +55,7 @@ const Home = ({ session }: AppProps) => {
 				<>
 					<main
 						id="main"
-						className={`min-h-screen items-center  p-24 ${inter.className}`}
+						className={`min-h-screen items-center p-12 ${inter.className}`}
 					>
 						{/* <h1>Ezer Login</h1> */}
 						<Title order={1}>Ezer Login</Title>
