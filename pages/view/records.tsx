@@ -112,6 +112,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
 		const record_res: Supabase_Response<Record[]> = await supabase
 			.from("records_view")
 			.select("*")
+			.range(0, 50)
 			.order("date", { ascending: false });
 
 		const { data: record_data, error: record_error } = record_res;
