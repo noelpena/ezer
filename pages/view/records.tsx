@@ -7,7 +7,7 @@ import "@mantine/core/styles.layer.css";
 import "@mantine/dates/styles.layer.css";
 
 import type { GetServerSidePropsContext } from "next/types";
-import type { Record, Supabase_Response } from "@/types/models";
+import type { Record, RecordsView, Supabase_Response } from "@/types/models";
 
 import capitalize from "@/utils/capitalize";
 import addCommasToAmount from "@/utils/addCommasToAmount";
@@ -19,7 +19,7 @@ import { useRouter } from "next/router";
 
 type ViewDepositProps = {
 	session: Session;
-	record_data: Record[];
+	record_data: RecordsView[];
 };
 
 export default function ViewRecords({
@@ -28,25 +28,30 @@ export default function ViewRecords({
 }: ViewDepositProps) {
 	const router = useRouter();
 
-	const rows = record_data.map((record) => (
-		<Table.Tr key={record.id}>
-			<Table.Td>{capitalize(record.category_id)}</Table.Td>
-			<Table.Td>{formatDate(record.deposit_date)}</Table.Td>
-			<Table.Td>
-				${addCommasToAmount((record.amount / 100).toFixed(2))}
-			</Table.Td>
-			<Table.Td>{record.notes}</Table.Td>
-			<Table.Td>{record.is_closed ? "Yes" : "No"}</Table.Td>
-			<Table.Td>
-				<Button
-					variant="subtle"
-					onClick={() => handleRecordEdit(record.id)}
-				>
-					Edit
-				</Button>
-			</Table.Td>
-		</Table.Tr>
-	));
+	const rows = record_data.map((record) => {
+		if (record.amount) {
+			return (
+				<Table.Tr key={record.id}>
+					<Table.Td>{record.category_name}</Table.Td>
+					<Table.Td>{record.member_name}</Table.Td>
+					<Table.Td>{record.department_name}</Table.Td>
+					<Table.Td>{`$${addCommasToAmount(
+						(record.amount / 100).toFixed(2)
+					)}`}</Table.Td>
+					<Table.Td>{formatDate(record.date || "")}</Table.Td>
+					<Table.Td>{record.description_notes}</Table.Td>
+					<Table.Td>
+						<Button
+							variant="subtle"
+							// onClick={() => handleRecordEdit(record.id)}
+						>
+							Edit
+						</Button>
+					</Table.Td>
+				</Table.Tr>
+			);
+		}
+	});
 
 	const handleDepositEdit = (id: string) => {
 		router.push(`/edit/deposit/${id}`);
@@ -59,66 +64,30 @@ export default function ViewRecords({
 			</Head>
 			<Layout session={session}>
 				<div className="h-screen max-w-screen-lg mt-6 mb-12 mx-4">
-					<Title order={2}>
-						{is_closed ? "Closed" : "Open"} Deposits
-					</Title>
+					<Title order={2}>Records List</Title>
 					{record_data.length > 0 ? (
 						<>
 							<Table striped withTableBorder>
 								<Table.Thead>
 									<Table.Tr>
-										<Table.Th>Deposit Type</Table.Th>
-										<Table.Th>Date</Table.Th>
+										<Table.Th>Category</Table.Th>
+										<Table.Th>Member</Table.Th>
+										<Table.Th>Department</Table.Th>
 										<Table.Th>Amount</Table.Th>
+										<Table.Th>Date</Table.Th>
 										<Table.Th>Notes</Table.Th>
-										<Table.Th>Closed?</Table.Th>
 										<Table.Th>Actions</Table.Th>
 									</Table.Tr>
 								</Table.Thead>
 								<Table.Tbody>{rows}</Table.Tbody>
 							</Table>
 							<br />
-							{is_closed ? (
-								<Button
-									variant="outline"
-									color="blue"
-									onClick={() => {
-										router.push("/view/deposits");
-									}}
-								>
-									View Open Deposits
-								</Button>
-							) : (
-								<Button
-									variant="outline"
-									color="yellow"
-									onClick={() => {
-										router.push(
-											"/view/deposits?is_closed=true"
-										);
-									}}
-								>
-									View Closed Deposits
-								</Button>
-							)}
 						</>
 					) : (
 						<>
 							<p className="my-3">
-								There are no open deposits to view.
+								There are no records to view.
 							</p>
-
-							<Button
-								variant="outline"
-								color="yellow"
-								onClick={() => {
-									router.push(
-										"/view/deposits?is_closed=true"
-									);
-								}}
-							>
-								View Closed Deposits
-							</Button>
 						</>
 					)}
 				</div>

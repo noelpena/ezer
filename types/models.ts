@@ -13,5 +13,6 @@ export type Record = Tables<"records">;
 
 export type GoogleSheetView =
 	Database["public"]["Views"]["googlesheetview"]["Row"];
+export type RecordsView = Database["public"]["Views"]["records_view"]["Row"];
 
 export type Supabase_Response<T> = PostgrestSingleResponse<T[]>;

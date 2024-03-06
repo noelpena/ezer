@@ -352,6 +352,58 @@ export type Database = {
           }
         ]
       }
+      records_view: {
+        Row: {
+          amount: number | null
+          category_id: number | null
+          category_name: string | null
+          created_at: string | null
+          date: string | null
+          department_id: number | null
+          department_name: string | null
+          deposit_amount: number | null
+          deposit_date: string | null
+          deposit_id: string | null
+          description_notes: string | null
+          id: string | null
+          income_expense: Database["public"]["Enums"]["IncomeExpense"] | null
+          last_modified: string | null
+          member_id: string | null
+          member_name: string | null
+          payment_type: Database["public"]["Enums"]["PaymentType"] | null
+          status: Database["public"]["Enums"]["Status"] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "records_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "records_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "records_deposit_id_fkey"
+            columns: ["deposit_id"]
+            isOneToOne: false
+            referencedRelation: "deposits"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "records_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "members"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
     }
     Functions: {
       get_user_role: {
