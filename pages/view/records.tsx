@@ -29,7 +29,7 @@ export default function ViewRecords({
 	const router = useRouter();
 
 	const rows = record_data.map((record) => {
-		if (record.amount) {
+		if (record.amount && record.id) {
 			return (
 				<Table.Tr key={record.id}>
 					<Table.Td>{record.category_name}</Table.Td>
@@ -38,12 +38,16 @@ export default function ViewRecords({
 					<Table.Td>{`$${addCommasToAmount(
 						(record.amount / 100).toFixed(2)
 					)}`}</Table.Td>
+					<Table.Td>
+						{capitalize(record.income_expense || "")}
+					</Table.Td>
+					<Table.Td>{capitalize(record.payment_type || "")}</Table.Td>
 					<Table.Td>{formatDate(record.date || "")}</Table.Td>
 					<Table.Td>{record.description_notes}</Table.Td>
 					<Table.Td>
 						<Button
 							variant="subtle"
-							// onClick={() => handleRecordEdit(record.id)}
+							onClick={() => handleRecordEdit(record.id)}
 						>
 							Edit
 						</Button>
@@ -53,14 +57,16 @@ export default function ViewRecords({
 		}
 	});
 
-	const handleDepositEdit = (id: string) => {
-		router.push(`/edit/deposit/${id}`);
+	const handleRecordEdit = (id: string | null) => {
+		if (id !== null) {
+			router.push(`/edit/record/${id}`);
+		}
 	};
 
 	return (
 		<>
 			<Head>
-				<title>Ezer | New Deposit</title>
+				<title>Ezer | View Records</title>
 			</Head>
 			<Layout session={session}>
 				<div className="h-screen max-w-screen-lg mt-6 mb-12 mx-4">
@@ -74,6 +80,8 @@ export default function ViewRecords({
 										<Table.Th>Member</Table.Th>
 										<Table.Th>Department</Table.Th>
 										<Table.Th>Amount</Table.Th>
+										<Table.Th>Income/Expense</Table.Th>
+										<Table.Th>Payment Type</Table.Th>
 										<Table.Th>Date</Table.Th>
 										<Table.Th>Notes</Table.Th>
 										<Table.Th>Actions</Table.Th>

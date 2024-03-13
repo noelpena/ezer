@@ -306,6 +306,13 @@ export type Database = {
             foreignKeyName: "records_deposit_id_fkey"
             columns: ["deposit_id"]
             isOneToOne: false
+            referencedRelation: "deposit_amount_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "records_deposit_id_fkey"
+            columns: ["deposit_id"]
+            isOneToOne: false
             referencedRelation: "deposits"
             referencedColumns: ["id"]
           },
@@ -322,7 +329,28 @@ export type Database = {
     Views: {
       deposit_amount_view: {
         Row: {
-          net_income: number | null
+          deposit_amount: number | null
+          deposit_date: string | null
+          deposit_type: Database["public"]["Enums"]["DepositType"] | null
+          id: string | null
+          is_equal: string | null
+          records_amount: number | null
+        }
+        Insert: {
+          deposit_amount?: never
+          deposit_date?: string | null
+          deposit_type?: Database["public"]["Enums"]["DepositType"] | null
+          id?: string | null
+          is_equal?: never
+          records_amount?: never
+        }
+        Update: {
+          deposit_amount?: never
+          deposit_date?: string | null
+          deposit_type?: Database["public"]["Enums"]["DepositType"] | null
+          id?: string | null
+          is_equal?: never
+          records_amount?: never
         }
         Relationships: []
       }
@@ -348,6 +376,13 @@ export type Database = {
             columns: ["deposit_id"]
             isOneToOne: false
             referencedRelation: "deposits"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "records_deposit_id_fkey"
+            columns: ["deposit_id"]
+            isOneToOne: false
+            referencedRelation: "deposit_amount_view"
             referencedColumns: ["id"]
           }
         ]
@@ -393,6 +428,13 @@ export type Database = {
             columns: ["deposit_id"]
             isOneToOne: false
             referencedRelation: "deposits"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "records_deposit_id_fkey"
+            columns: ["deposit_id"]
+            isOneToOne: false
+            referencedRelation: "deposit_amount_view"
             referencedColumns: ["id"]
           },
           {

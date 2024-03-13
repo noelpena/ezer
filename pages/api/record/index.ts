@@ -17,6 +17,8 @@ export default function handler(
 ) {
 	if (req.method === "POST") {
 		return createNewRecord(req, res);
+	} else if (req.method === "PUT") {
+		return editRecord(req, res);
 	} else {
 		return res
 			.status(405)
@@ -54,6 +56,35 @@ async function createNewRecord(
 			data: null,
 			error: newRecordResponse.error,
 			message: newRecordResponse.error.message,
+		});
+	}
+}
+
+async function editRecord(req: NextApiRequest, res: NextApiResponse<Data>) {
+	const supabase = createApiRouteClient(req, res);
+
+	let body = req.body;
+	if (typeof req.body === "string") {
+		body = JSON.parse(req.body);
+	}
+
+	const editRecordResponse: Supabase_Response<Record> = await supabase
+		.from("records")
+		.update(body)
+		.eq("id", body.id)
+		.select("*");
+
+	if (editRecordResponse.data) {
+		res.status(200).json({
+			data: editRecordResponse.data,
+			error: null,
+			message: "",
+		});
+	} else {
+		res.status(500).json({
+			data: null,
+			error: editRecordResponse.error,
+			message: editRecordResponse.error.message,
 		});
 	}
 }

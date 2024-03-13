@@ -1,68 +1,130 @@
-import _ from "lodash";
-import Head from "next/head";
-import React, { useState } from "react";
-import { zodResolver } from "mantine-form-zod-resolver";
-import { z } from "zod";
-import { useForm } from "@mantine/form";
+import Layout from "@/components/Layout";
 import {
-	Button,
-	NumberInput,
-	Select,
-	SimpleGrid,
-	Textarea,
-} from "@mantine/core";
-import { createSupabaseReqResClient } from "@/utils/supabase";
-
-import "@mantine/core/styles.layer.css";
-import "@mantine/dates/styles.layer.css";
-
-import type { GetServerSidePropsContext } from "next/types";
-import type {
 	Category,
 	Department,
 	Deposit,
 	Member,
+	Record,
 	Supabase_Response,
 } from "@/types/models";
-import { DateInput } from "@mantine/dates";
-import capitalize from "@/utils/capitalize";
-import googleDate from "@/utils/googleDate";
-import Layout from "@/components/Layout";
-
-import { Session } from "@supabase/supabase-js";
-import formatDate from "@/utils/formatDate";
 import addCommasToAmount from "@/utils/addCommasToAmount";
-import supabaseDate from "@/utils/supabaseDate";
+import formatDate from "@/utils/formatDate";
+import { createSupabaseReqResClient } from "@/utils/supabase";
+import {
+	Anchor,
+	Breadcrumbs,
+	Button,
+	Container,
+	Flex,
+	NumberInput,
+	Select,
+	SimpleGrid,
+	Textarea,
+	Title,
+} from "@mantine/core";
+import { DateInput } from "@mantine/dates";
+import { useForm, zodResolver } from "@mantine/form";
+import { Session } from "@supabase/supabase-js";
+import _ from "lodash";
+import Head from "next/head";
+import { GetServerSidePropsContext } from "next/types";
+import { useState } from "react";
+import { record, z } from "zod";
 
 type mantineSelectData = {
 	value: string;
 	label: string;
 };
 
-type NewRecordProps = {
-	session: Session;
+type EditRecordProps = {
+	record_data: Record[];
 	dept_data: Department[];
 	cat_data: Category[];
 	member_data: Member[];
 	deposit_data: Deposit[];
+	session: Session;
 };
 
-const GOOGLE_PROJECT_BASE_URL = process.env.NEXT_PUBLIC_GOOGLE_PROJECT_BASE_URL;
-
-const NewRecord = ({
-	session,
+export default function EditRecord({
+	record_data,
 	dept_data,
 	cat_data,
 	member_data,
 	deposit_data,
-}: NewRecordProps) => {
+	session,
+}: EditRecordProps) {
 	const [btnIsDisabled, setBtnIsDisabled] = useState<boolean>(false);
+	const [recordData, setRecordData] = useState<Record>(record_data[0]);
+
 	const [showMemberDropdown, setShowMemberDropdown] = useState<
 		boolean | null
-	>(false);
+	>(() => {
+		if (recordData.category_id === 1) {
+			return true;
+		} else {
+			return false;
+		}
+	});
 	const [showDeptDropdown, setShowDeptDropdown] = useState<boolean | null>(
-		true
+		() => {
+			if (recordData.category_id === 1) {
+				return false;
+			} else {
+				return true;
+			}
+		}
 	);
+
+	const editRecordSchema = z.object({
+		id: z.string().uuid(),
+		member_id: z.string().uuid().nullable(),
+		department_id: z.number().or(z.string()),
+		category_id: z.number().or(z.string()),
+		amount: z.number().or(
+			z.number().refine(
+				(n) => {
+					return n.toString().split(".")[1].length <= 2;
+				},
+				{ message: "Max precision is 2 decimal places" }
+			)
+		),
+		income_expense: z.enum(["income", "expense"]),
+		payment_type: z.enum(["cash", "check", "venmo", "debitCard"]),
+		date: z.date({
+			required_error: "Please select a date and time",
+			invalid_type_error: "That's not a date!",
+		}),
+		description_notes: z.string().optional(),
+		deposit_id: z.string().uuid().nullable(),
+		deposit_date: z
+			.date({
+				required_error: "Please select a date and time",
+				invalid_type_error: "That's not a date!",
+			})
+			.nullable()
+			.or(z.string().nullable()),
+		status: z.enum(["recorded", "deposited"]),
+	});
+
+	const tesoreriaForm = useForm({
+		validate: zodResolver(editRecordSchema),
+		initialValues: {
+			id: recordData.id,
+			member_id: recordData.member_id,
+			department_id: String(recordData.department_id),
+			category_id: String(recordData.category_id),
+			amount: parseFloat(
+				addCommasToAmount((recordData.amount / 100).toFixed(2))
+			),
+			income_expense: recordData.income_expense,
+			payment_type: recordData.payment_type,
+			date: new Date(formatDate(recordData.date)),
+			description_notes: recordData.description_notes,
+			deposit_id: recordData.deposit_id,
+			deposit_date: new Date(formatDate(recordData.deposit_date || "")),
+			status: recordData.status,
+		},
+	});
 
 	function cat_names(cat_data: Category[]) {
 		if (!cat_data) {
@@ -136,56 +198,9 @@ const NewRecord = ({
 		return extractNames;
 	}
 
-	const newRecordSchema = z.object({
-		member_id: z.string().uuid().nullable(),
-		department_id: z.number().or(z.string()).nullable(),
-		category_id: z.number().or(z.string().nullable()),
-		amount: z.number().or(
-			z.number().refine(
-				(n) => {
-					return n.toString().split(".")[1].length <= 2;
-				},
-				{ message: "Max precision is 2 decimal places" }
-			)
-		),
-		income_expense: z.enum(["income", "expense"]),
-		payment_type: z.enum(["cash", "check", "venmo", "debitCard"]),
-		date: z.date({
-			required_error: "Please select a date and time",
-			invalid_type_error: "That's not a date!",
-		}),
-		description_notes: z.string().optional(),
-		deposit_id: z.string().uuid().nullable(),
-		deposit_date: z
-			.date({
-				required_error: "Please select a date and time",
-				invalid_type_error: "That's not a date!",
-			})
-			.nullable()
-			.or(z.string().nullable()),
-		// .nullable()
-		// status: z.enum(["deposited", "recorded"]),
-	});
-
-	const tesoreriaForm = useForm({
-		validate: zodResolver(newRecordSchema),
-		initialValues: {
-			member_id: null,
-			department_id: null,
-			category_id: "",
-			amount: 0,
-			income_expense: "income",
-			payment_type: "cash",
-			date: new Date(),
-			description_notes: "",
-			deposit_id: null,
-			deposit_date: null,
-			// status: "recorded",
-		},
-	});
-
-	const submitNewRecord = async (values: any) => {
+	const submitEditRecord = async (values: any) => {
 		setBtnIsDisabled(true);
+		console.log(values);
 		if (values.department_id == null && values.member_id == null) {
 			console.error("department or member is required");
 			setBtnIsDisabled(false);
@@ -193,102 +208,57 @@ const NewRecord = ({
 		}
 
 		var newData = _.cloneDeep(values);
-		console.log(values);
-
-		newData.date = supabaseDate(newData.date);
-		newData.category_id = parseInt(newData.category_id);
-		newData.department_id = parseInt(newData.department_id);
-		newData.status = "recorded";
 		newData.amount = parseInt(
 			(parseFloat(newData.amount) * 100).toFixed(2)
 		);
+		console.log(newData);
+		// // console.log(newData);
+		// // newData.deposit_date = supabaseDate(newData.deposit_date);
 
-		const newRecordResponse = await fetch("/api/record", {
-			method: "POST",
+		const editRecordResponse = await fetch("/api/record/", {
+			method: "PUT",
 			body: JSON.stringify(newData),
 		});
 
-		const { data, error } = await newRecordResponse.json();
-
+		const { data, error } = await editRecordResponse.json();
 		console.log(data);
 		if (error) {
 			console.error(error);
 		}
-		if (data !== null) {
-			await add2GoogleSheet(data[0]);
+		// // handle error, add logging
 
-			const previousDate = formatDate(data[0].date);
-			const isVenmo =
-				data[0].payment_type.toLowerCase() == "venmo"
-					? "venmo"
-					: "cash";
-			const depositInfo = {
-				id: data[0].deposit_id,
-				date: formatDate(data[0].deposit_date),
-			};
+		setRecordData(data[0]);
+		tesoreriaForm.setValues({ ...newData, amount: newData.amount / 100 });
 
-			tesoreriaForm.reset();
-			tesoreriaForm.setValues({
-				//@ts-ignore
-				category_id: null,
-				date: new Date(previousDate),
-				payment_type: isVenmo,
-				deposit_id: depositInfo.id,
-				//@ts-ignore
-				deposit_date: new Date(formatDate(depositInfo.date)) as string,
-			});
-			setShowMemberDropdown(false);
-			setShowDeptDropdown(true);
-			setBtnIsDisabled(false);
-		}
+		setBtnIsDisabled(false);
 	};
 
-	const handleCategoryClick = (event: React.MouseEvent<HTMLElement>) => {
-		const input = event.target as HTMLElement;
-		// console.log(input.innerText);
-		// console.log(tesoreriaForm);
+	const items: any = [
+		{ title: "Records", href: "/view/records" },
+		{ title: "Edit Record", href: "##" },
+	];
 
-		switch (input.innerText) {
-			case "Diezmo":
-				tesoreriaForm.setValues({ category_id: "1" });
+	const breadCrumbItems = items.map((item: any, index: number) =>
+		index !== items.length - 1 ? (
+			<Anchor href={item.href} key={index}>
+				{item.title}
+			</Anchor>
+		) : (
+			<span key={index}>{item.title}</span>
+		)
+	);
+
+	const handleCatSearchChange = (target: string | null) => {
+		if (target) {
+			if (parseInt(target) === 1) {
 				setShowMemberDropdown(true);
 				setShowDeptDropdown(false);
-				break;
-			case "Ofrenda":
-				tesoreriaForm.setValues({ category_id: "2" });
+			} else {
 				setShowMemberDropdown(false);
 				setShowDeptDropdown(true);
-				break;
-			case "Other":
-				//@ts-ignore
-				tesoreriaForm.setValues({ category_id: null });
-				setShowMemberDropdown(false);
-				setShowDeptDropdown(true);
-				break;
-			default:
-				tesoreriaForm.setValues({ category_id: "" });
-				setShowMemberDropdown(false);
-				setShowDeptDropdown(true);
+			}
+			tesoreriaForm.setValues({ category_id: target });
 		}
-	};
-
-	const add2GoogleSheet = async (data: any) => {
-		const member = data.member_name === null ? "" : data.member_name;
-		const dept = data.department_name === null ? "" : data.department_name;
-		const res = await fetch(`${GOOGLE_PROJECT_BASE_URL}?
-						&categorias=${data.category_name}
-						&nombre=${member}
-						&departamento=${dept}
-						&cantidad=${data.amount / 100}
-						&entrada_o_salida=${data.entrada_salida}
-						&cash_o_check=${data.payment_type}
-						&descripcion=${encodeURIComponent(data.description_notes)}
-						&date=${googleDate(data.date)}
-						&status=${capitalize(data.status)}`);
-
-		const { resdata, error } = await res.json();
-		console.log(resdata);
-		console.error(error);
 	};
 
 	const handleDepositDate = (id: any) => {
@@ -308,59 +278,27 @@ const NewRecord = ({
 		});
 	};
 
-	const handleCatSearchChange = (target: string | null) => {
-		if (target) {
-			if (parseInt(target) === 1) {
-				setShowMemberDropdown(true);
-				setShowDeptDropdown(false);
-			} else {
-				setShowMemberDropdown(false);
-				setShowDeptDropdown(true);
-			}
-			tesoreriaForm.setValues({ category_id: target });
-		}
-	};
-
 	return (
 		<>
 			<Head>
-				<title>Ezer | New Record</title>
+				<title>Ezer | Edit Record</title>
 			</Head>
 			<Layout session={session}>
-				<div className="h-screen max-w-screen-lg mt-6 mb-12 mx-4">
-					<SimpleGrid cols={{ sm: 3 }}>
-						<Button
-							variant="filled"
-							size="lg"
-							onClick={handleCategoryClick}
-							className="p-8"
-						>
-							Diezmo
-						</Button>
-
-						<Button
-							variant="light"
-							size="lg"
-							onClick={handleCategoryClick}
-						>
-							Ofrenda
-						</Button>
-
-						<Button
-							variant="outline"
-							size="lg"
-							onClick={handleCategoryClick}
-						>
-							Other
-						</Button>
-					</SimpleGrid>
+				{/* {JSON.stringify(record_data)} */}
+				<Container>
+					<Breadcrumbs separator=">" mt="xs">
+						{breadCrumbItems}
+					</Breadcrumbs>
+					<Flex className="mt-8" direction="column">
+						<Title order={2}>Edit Record</Title>
+					</Flex>
 
 					<form
 						className="flex flex-col gap-y-6 mt-3 mb-2"
 						action=""
 						id="form-add-record"
 						onSubmit={tesoreriaForm.onSubmit((values) =>
-							submitNewRecord(values)
+							submitEditRecord(values)
 						)}
 					>
 						<Select
@@ -398,7 +336,7 @@ const NewRecord = ({
 							placeholder="Dollars"
 							prefix="$"
 							min={0}
-							defaultValue={0.0}
+							// defaultValue={0.0}
 							// mb="md"
 							size="lg"
 							{...tesoreriaForm.getInputProps("amount")}
@@ -460,7 +398,6 @@ const NewRecord = ({
 
 						<DateInput
 							valueFormat="MM/DD/YYYY"
-							// defaultvalue={new Date()}
 							label="Date"
 							placeholder="Date"
 							size="lg"
@@ -487,25 +424,41 @@ const NewRecord = ({
 								{...tesoreriaForm.getInputProps("deposit_date")}
 							/>
 						</SimpleGrid>
+
+						<Select
+							label="Status?"
+							data={[
+								{
+									value: "recorded",
+									label: "Recorded",
+								},
+								{
+									value: "deposited",
+									label: "Deposited",
+								},
+							]}
+							size="lg"
+							{...tesoreriaForm.getInputProps("status")}
+						/>
+
 						<Button
 							variant="filled"
 							size="lg"
 							id="submit-btn"
 							type="submit"
 							loading={btnIsDisabled}
-							// disabled={btnIsDisabled}
 						>
 							Submit
 						</Button>
 					</form>
-				</div>
+				</Container>
 			</Layout>
 		</>
 	);
-};
-export default NewRecord;
+}
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
+	const { id } = ctx.query;
 	const supabase = createSupabaseReqResClient(ctx);
 
 	const {
@@ -513,12 +466,20 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
 	} = await supabase.auth.getSession();
 
 	try {
-		const [department_res, category_res, member_res, deposit_res]: [
+		const [
+			record_res,
+			department_res,
+			category_res,
+			member_res,
+			deposit_res,
+		]: [
+			Supabase_Response<Record[]>,
 			Supabase_Response<Department[]>,
 			Supabase_Response<Category[]>,
 			Supabase_Response<Member[]>,
 			Supabase_Response<Deposit[]>
 		] = await Promise.all([
+			supabase.from("records").select("*").eq("id", id),
 			supabase.from("departments").select("*"),
 			supabase.from("categories").select("*"),
 			supabase
@@ -526,7 +487,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
 				.select("*")
 				.eq("is_active", "true")
 				.order("full_name", { ascending: true }),
-			supabase.from("deposits").select("*").eq("is_closed", false),
+			supabase.from("deposits").select("*"),
 		]);
 
 		const { data: dept_data, error: dept_error } = department_res;
@@ -534,8 +495,17 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
 		const { data: member_data, error: member_error } = member_res;
 		const { data: deposit_data, error: deposit_error } = deposit_res;
 
+		const { data: record_data, error: record_error } = record_res;
+
 		return {
-			props: { session, dept_data, cat_data, member_data, deposit_data },
+			props: {
+				record_data,
+				dept_data,
+				cat_data,
+				member_data,
+				deposit_data,
+				session,
+			},
 		};
 	} catch (error) {
 		console.error(
