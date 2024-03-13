@@ -1,5 +1,6 @@
 -   [x] Add loading to form until after submission completes. Possibly disable fields
 -   [ ] Add loading mantine notification on forms
+-   [ ] Add error mantine notification on forms
 -   [ ] Add greeting and name to header menu
 -   [x] Add mobile menu (drawer in Mantine)
 -   [ ] RLS in supabase? Roles? - in progress
@@ -8,5 +9,6 @@
 -   [ ] Permissions
 -   [ ] new dept form
 -   [ ] new member form
+-   [ ] is last modified being updated on edits?
 -   [ ] Preference of language
 -   [ ] Add sum for open deposits on deposit list

@@ -184,7 +184,7 @@ export default function NewDeposit({ session, deposit_data }: NewDepositProps) {
 										label: "Venmo",
 									},
 								]}
-								value="Entrada"
+								value="bank"
 								size="lg"
 								{...depositForm.getInputProps("deposit_type")}
 							/>
@@ -250,9 +250,10 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
 	} = await supabase.auth.getSession();
 
 	try {
-		const [deposit_res]: [Supabase_Response<Deposit>] = await Promise.all([
-			supabase.from("deposits").select("*").eq("is_closed", false),
-		]);
+		const deposit_res: Supabase_Response<Deposit> = await supabase
+			.from("deposits")
+			.select("*")
+			.eq("is_closed", false);
 
 		const { data: deposit_data, error: deposit_error } = deposit_res;
 

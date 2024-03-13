@@ -138,10 +138,11 @@ export type Database = {
         Row: {
           average_tithe: number | null
           created_at: string
+          display_name: string | null
           full_name: string | null
           highest_tithe: number | null
           id: string
-          is_active: boolean | null
+          is_active: boolean
           last_modified: string
           lowest_tithe: number | null
           total_tithe: number | null
@@ -150,10 +151,11 @@ export type Database = {
         Insert: {
           average_tithe?: number | null
           created_at?: string
+          display_name?: string | null
           full_name?: string | null
           highest_tithe?: number | null
           id?: string
-          is_active?: boolean | null
+          is_active?: boolean
           last_modified?: string
           lowest_tithe?: number | null
           total_tithe?: number | null
@@ -162,10 +164,11 @@ export type Database = {
         Update: {
           average_tithe?: number | null
           created_at?: string
+          display_name?: string | null
           full_name?: string | null
           highest_tithe?: number | null
           id?: string
-          is_active?: boolean | null
+          is_active?: boolean
           last_modified?: string
           lowest_tithe?: number | null
           total_tithe?: number | null

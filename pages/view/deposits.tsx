@@ -57,7 +57,7 @@ export default function ViewDeposit({
 	return (
 		<>
 			<Head>
-				<title>Ezer | View Deposit</title>
+				<title>Ezer | View Deposits</title>
 			</Head>
 			<Layout session={session}>
 				<div className="h-screen max-w-screen-lg mt-6 mb-12 mx-4">

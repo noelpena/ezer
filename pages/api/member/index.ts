@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { Deposit } from "@/types/models";
+import { Member } from "@/types/models";
 import { PostgrestError } from "@supabase/supabase-js";
 import { editResource, newResource } from "../resource";
 
@@ -14,9 +14,11 @@ export default function handler(
 	res: NextApiResponse<Data>
 ) {
 	if (req.method === "POST") {
-		return newResource<Deposit>(req, res, "deposits");
+		return newResource<Member>(req, res, "members");
+		// return createNewMember(req, res);
 	} else if (req.method === "PUT") {
-		return editResource<Deposit>(req, res, "deposits");
+		// return editMember(req, res);
+		return editResource<Member>(req, res, "members");
 	} else {
 		return res
 			.status(405)

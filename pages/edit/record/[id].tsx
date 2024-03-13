@@ -104,6 +104,7 @@ export default function EditRecord({
 			.nullable()
 			.or(z.string().nullable()),
 		status: z.enum(["recorded", "deposited"]),
+		created_at: z.date(),
 	});
 
 	const tesoreriaForm = useForm({
@@ -123,6 +124,7 @@ export default function EditRecord({
 			deposit_id: recordData.deposit_id,
 			deposit_date: new Date(formatDate(recordData.deposit_date || "")),
 			status: recordData.status,
+			created_at: recordData.created_at,
 		},
 	});
 

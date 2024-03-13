@@ -37,6 +37,7 @@ const links = [
 		links: [
 			{ link: "/view/records", label: "Records" },
 			{ link: "/view/deposits", label: "Deposits" },
+			{ link: "/view/members", label: "Members" },
 		],
 	},
 	{
@@ -45,9 +46,9 @@ const links = [
 		links: [
 			{ link: "/new/record", label: "Record" },
 			{ link: "/new/deposit", label: "Deposit" },
-			{ link: "/resources", label: "Department" },
-			{ link: "/community", label: "Member" },
-			{ link: "/blog", label: "Balance" },
+			{ link: "/new/member", label: "Member" },
+			// { link: "/resources", label: "Department" },
+			// { link: "/blog", label: "Balance" },
 		],
 	},
 	{ link: "/about", label: "Reports", icon: IconClipboardData },

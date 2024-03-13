@@ -33,7 +33,8 @@ const Home = ({ session }: AppProps) => {
 				}
 
 				if (event == "SIGNED_IN") {
-					router.push("/dashboard");
+					// router.push("/dashboard");
+					router.push("/view/records");
 					// setSesh(newSession);
 					console.log("SIGNED IN");
 				}
