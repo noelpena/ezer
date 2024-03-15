@@ -104,7 +104,13 @@ export default function EditRecord({
 			.nullable()
 			.or(z.string().nullable()),
 		status: z.enum(["recorded", "deposited"]),
-		created_at: z.date(),
+		created_at: z
+			.date({
+				required_error: "Please select a date and time",
+				invalid_type_error: "That's not a date!",
+			})
+			.nullable()
+			.or(z.string().nullable()),
 	});
 
 	const tesoreriaForm = useForm({
@@ -213,8 +219,7 @@ export default function EditRecord({
 		newData.amount = parseInt(
 			(parseFloat(newData.amount) * 100).toFixed(2)
 		);
-		console.log(newData);
-		// // console.log(newData);
+
 		// // newData.deposit_date = supabaseDate(newData.deposit_date);
 
 		const editRecordResponse = await fetch("/api/record/", {

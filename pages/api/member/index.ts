@@ -15,9 +15,7 @@ export default function handler(
 ) {
 	if (req.method === "POST") {
 		return newResource<Member>(req, res, "members");
-		// return createNewMember(req, res);
 	} else if (req.method === "PUT") {
-		// return editMember(req, res);
 		return editResource<Member>(req, res, "members");
 	} else {
 		return res

@@ -1,6 +1,6 @@
 import Head from "next/head";
 
-import { Button, Table, Title } from "@mantine/core";
+import { Button, SimpleGrid, Table, Title } from "@mantine/core";
 import { createSupabaseReqResClient } from "@/utils/supabase";
 
 import "@mantine/core/styles.layer.css";
@@ -16,6 +16,7 @@ import Layout from "@/components/Layout";
 import { Session } from "@supabase/supabase-js";
 import formatDate from "@/utils/formatDate";
 import { useRouter } from "next/router";
+import { IconRefresh } from "@tabler/icons-react";
 
 type ViewDepositProps = {
 	session: Session;
@@ -70,7 +71,20 @@ export default function ViewRecords({
 			</Head>
 			<Layout session={session}>
 				<div className="h-screen max-w-screen-lg mt-6 mb-12 mx-4">
-					<Title order={2}>Records List</Title>
+					<SimpleGrid cols={2} className="mb-4">
+						<Title order={2}>Records List</Title>
+						<Button
+							className="border-1 !border-green-500"
+							variant="light"
+							color="green"
+							onClick={() => {
+								router.reload(); // make this better
+							}}
+							rightSection={<IconRefresh size={16} />}
+						>
+							Refresh List
+						</Button>
+					</SimpleGrid>
 					{record_data.length > 0 ? (
 						<>
 							<Table striped withTableBorder>
@@ -120,8 +134,8 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
 		const record_res: Supabase_Response<Record[]> = await supabase
 			.from("records_view")
 			.select("*")
-			.range(0, 50)
-			.order("date", { ascending: false });
+			.range(0, 50);
+		// .order("date", { ascending: false });
 
 		const { data: record_data, error: record_error } = record_res;
 

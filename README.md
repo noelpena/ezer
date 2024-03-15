@@ -8,7 +8,8 @@
 -   [x] /new/record and /new/deposit instead of /record/new
 -   [ ] Permissions
 -   [ ] new dept form
--   [ ] new member form
+-   [x] new member form
 -   [ ] is last modified being updated on edits?
 -   [ ] Preference of language
--   [ ] Add sum for open deposits on deposit list
+-   [ ] View Records within a Deposit
+-   [ ] Add sum for open deposits on deposit list (view deposits would show deposit view. Add missing fields. Only for open deposits)

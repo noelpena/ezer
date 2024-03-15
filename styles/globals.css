@@ -20,3 +20,7 @@ body {
 	color: rgb(var(--foreground-rgb));
 	margin: auto !important;
 }
+
+.mantine-DatePicker-day[data-selected] {
+	background-color: #7048e8 !important;
+}

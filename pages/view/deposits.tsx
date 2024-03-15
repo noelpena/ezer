@@ -1,6 +1,6 @@
 import Head from "next/head";
 
-import { Button, Table, Title } from "@mantine/core";
+import { Button, SimpleGrid, Table, Title } from "@mantine/core";
 import { createSupabaseReqResClient } from "@/utils/supabase";
 
 import "@mantine/core/styles.layer.css";
@@ -61,9 +61,34 @@ export default function ViewDeposit({
 			</Head>
 			<Layout session={session}>
 				<div className="h-screen max-w-screen-lg mt-6 mb-12 mx-4">
-					<Title order={2}>
-						{is_closed ? "Closed" : "Open"} Deposits
-					</Title>
+					<SimpleGrid cols={2} className="mb-4">
+						<Title order={2}>
+							{is_closed ? "Closed" : "Open"} Deposits
+						</Title>
+						{is_closed ? (
+							<Button
+								variant="outline"
+								color="blue"
+								onClick={() => {
+									router.push("/view/deposits");
+								}}
+							>
+								View Open Deposits
+							</Button>
+						) : (
+							<Button
+								variant="outline"
+								color="yellow"
+								onClick={() => {
+									router.push(
+										"/view/deposits?is_closed=true"
+									);
+								}}
+							>
+								View Closed Deposits
+							</Button>
+						)}
+					</SimpleGrid>
 					{deposit_data.length > 0 ? (
 						<>
 							<Table striped withTableBorder>
@@ -79,48 +104,12 @@ export default function ViewDeposit({
 								</Table.Thead>
 								<Table.Tbody>{rows}</Table.Tbody>
 							</Table>
-							<br />
-							{is_closed ? (
-								<Button
-									variant="outline"
-									color="blue"
-									onClick={() => {
-										router.push("/view/deposits");
-									}}
-								>
-									View Open Deposits
-								</Button>
-							) : (
-								<Button
-									variant="outline"
-									color="yellow"
-									onClick={() => {
-										router.push(
-											"/view/deposits?is_closed=true"
-										);
-									}}
-								>
-									View Closed Deposits
-								</Button>
-							)}
 						</>
 					) : (
 						<>
 							<p className="my-3">
 								There are no open deposits to view.
 							</p>
-
-							<Button
-								variant="outline"
-								color="yellow"
-								onClick={() => {
-									router.push(
-										"/view/deposits?is_closed=true"
-									);
-								}}
-							>
-								View Closed Deposits
-							</Button>
 						</>
 					)}
 				</div>

@@ -19,25 +19,33 @@ import { GetServerSidePropsContext } from "next/types";
 import { useState } from "react";
 import { z } from "zod";
 
-type EditDepositProps = {
+type EditMemberProps = {
 	session: Session;
 	member_data: Member[];
 };
 
-export default function EditMember({ session, member_data }: EditDepositProps) {
+export default function EditMember({ session, member_data }: EditMemberProps) {
 	const [btnIsDisabled, setBtnIsDisabled] = useState<boolean>(false);
-	const [memberData, setDepositData] = useState<Member>(member_data[0]);
+	const [memberData, setMemberData] = useState<Member>(member_data[0]);
 
 	const editMemberSchema = z.object({
+		id: z.string().uuid(),
 		full_name: z.string().optional(),
 		display_name: z.string().optional(),
 		is_active: z.boolean().or(z.enum(["true", "false"])),
-		created_at: z.date(),
+		created_at: z
+			.date({
+				required_error: "Please select a date and time",
+				invalid_type_error: "That's not a date!",
+			})
+			.nullable()
+			.or(z.string().nullable()),
 	});
 
 	const memberForm = useForm({
 		validate: zodResolver(editMemberSchema),
 		initialValues: {
+			id: memberData.id,
 			full_name: memberData.full_name,
 			display_name: memberData.display_name,
 			is_active: memberData.is_active.toString(),
@@ -51,21 +59,19 @@ export default function EditMember({ session, member_data }: EditDepositProps) {
 
 		console.log(newData);
 
-		// const newDepositResponse = await fetch("/api/deposit/", {
-		// 	method: "PUT",
-		// 	body: JSON.stringify(newData),
-		// });
+		const editMemberResponse = await fetch("/api/member/", {
+			method: "PUT",
+			body: JSON.stringify(newData),
+		});
 
-		// const { data, error } = await newDepositResponse.json();
-		// // console.log(data);
-		// if (error) {
-		// 	console.error(error);
-		// }
-		// // handle error, add logging
+		const { data, error } = await editMemberResponse.json();
+		console.log(data);
+		if (error) {
+			console.error(error);
+		}
+		// handle error, add logging
 
-		// setDepositData(data[0]);
-		memberForm.reset();
-
+		setMemberData(data[0]);
 		setBtnIsDisabled(false);
 	};
 
@@ -164,7 +170,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
 			supabase.from("members").select("*").eq("id", id),
 		]);
 
-		const { data: member_data, error: deposit_error } = member_res;
+		const { data: member_data, error: member_error } = member_res;
 
 		return {
 			props: { session, member_data },

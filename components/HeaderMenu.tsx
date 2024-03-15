@@ -52,6 +52,7 @@ const links = [
 		],
 	},
 	{ link: "/about", label: "Reports", icon: IconClipboardData },
+	{ link: "/admin", label: "Admin", icon: IconClipboardData },
 ];
 
 type AppProps = {

@@ -22,6 +22,7 @@ import type {
 	Department,
 	Deposit,
 	Member,
+	Record,
 	Supabase_Response,
 } from "@/types/models";
 import { DateInput } from "@mantine/dates";
@@ -185,15 +186,24 @@ const NewRecord = ({
 	});
 
 	const submitNewRecord = async (values: any) => {
+		//shouldn't values be typed as Record? but zod or form fields don't take number for category, has to be string???? Confused
 		setBtnIsDisabled(true);
-		if (values.department_id == null && values.member_id == null) {
+		console.log(values);
+		if (values.department_id === null && values.member_id === null) {
 			console.error("department or member is required");
 			setBtnIsDisabled(false);
 			return false;
 		}
+		if (
+			(values.category_id !== "1" || values.category_id !== 1) &&
+			values.member_id !== null
+		) {
+			console.error("Diezmo is required if member is selected");
+			setBtnIsDisabled(false);
+			return false;
+		}
 
-		var newData = _.cloneDeep(values);
-		console.log(values);
+		var newData: any = _.cloneDeep(values);
 
 		newData.date = supabaseDate(newData.date);
 		newData.category_id = parseInt(newData.category_id);
@@ -316,6 +326,7 @@ const NewRecord = ({
 			} else {
 				setShowMemberDropdown(false);
 				setShowDeptDropdown(true);
+				tesoreriaForm.setValues({ member_id: null });
 			}
 			tesoreriaForm.setValues({ category_id: target });
 		}
@@ -485,6 +496,15 @@ const NewRecord = ({
 								placeholder="Deposit Date"
 								size="lg"
 								{...tesoreriaForm.getInputProps("deposit_date")}
+								styles={{
+									day: {
+										"&[data-selected], &[data-selected]:hover":
+											{
+												backgroundColor: `#128797`,
+												color: "white",
+											},
+									},
+								}}
 							/>
 						</SimpleGrid>
 						<Button

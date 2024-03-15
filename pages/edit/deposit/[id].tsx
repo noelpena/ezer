@@ -135,6 +135,7 @@ export default function EditDeposit({
 								label="Deposit Date"
 								placeholder="Date"
 								size="lg"
+								firstDayOfWeek={0}
 								{...depositForm.getInputProps("deposit_date")}
 							/>
 							<Select

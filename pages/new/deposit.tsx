@@ -169,6 +169,7 @@ export default function NewDeposit({ session, deposit_data }: NewDepositProps) {
 								label="Deposit Date"
 								placeholder="Date"
 								size="lg"
+								firstDayOfWeek={0}
 								{...depositForm.getInputProps("deposit_date")}
 							/>
 							<Select
