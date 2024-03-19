@@ -34,6 +34,7 @@ import { Session } from "@supabase/supabase-js";
 import formatDate from "@/utils/formatDate";
 import addCommasToAmount from "@/utils/addCommasToAmount";
 import supabaseDate from "@/utils/supabaseDate";
+import { showToast, updateToast } from "@/utils/notification";
 
 type mantineSelectData = {
 	value: string;
@@ -188,17 +189,34 @@ const NewRecord = ({
 	const submitNewRecord = async (values: any) => {
 		//shouldn't values be typed as Record? but zod or form fields don't take number for category, has to be string???? Confused
 		setBtnIsDisabled(true);
+		showToast(
+			"new-record",
+			"Loading...",
+			"Adding new record to the database.",
+			"blue",
+			true
+		);
 		console.log(values);
 		if (values.department_id === null && values.member_id === null) {
 			console.error("department or member is required");
+			updateToast(
+				"new-record",
+				"Failed.",
+				"New record was not added to database. Department or member is required.",
+				"red"
+			);
 			setBtnIsDisabled(false);
 			return false;
 		}
-		if (
-			(values.category_id !== "1" || values.category_id !== 1) &&
-			values.member_id !== null
-		) {
+
+		if (values.category_id !== "1" && values.member_id !== null) {
 			console.error("Diezmo is required if member is selected");
+			updateToast(
+				"new-record",
+				"Failed.",
+				"New record was not added to database. Diezmo is required if member is selected.",
+				"red"
+			);
 			setBtnIsDisabled(false);
 			return false;
 		}
@@ -223,9 +241,29 @@ const NewRecord = ({
 		console.log(data);
 		if (error) {
 			console.error(error);
+			updateToast(
+				"new-record",
+				"Failed.",
+				"New record was not added to database. " + error,
+				"red"
+			);
 		}
 		if (data !== null) {
+			updateToast(
+				"new-record",
+				"Success!",
+				"New record added to database.",
+				"green"
+			);
+			showToast(
+				"new-google-record",
+				"Saving to Google...",
+				"Adding new record to the google sheets.",
+				"blue",
+				true
+			);
 			await add2GoogleSheet(data[0]);
+			// return value to check for errors from Google?
 
 			const previousDate = formatDate(data[0].date);
 			const isVenmo =
@@ -236,7 +274,12 @@ const NewRecord = ({
 				id: data[0].deposit_id,
 				date: formatDate(data[0].deposit_date),
 			};
-
+			updateToast(
+				"new-google-record",
+				"Success!",
+				"New record added to google sheets.",
+				"green"
+			);
 			tesoreriaForm.reset();
 			tesoreriaForm.setValues({
 				//@ts-ignore

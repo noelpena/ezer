@@ -12,4 +12,6 @@
 -   [ ] is last modified being updated on edits?
 -   [ ] Preference of language
 -   [ ] View Records within a Deposit
+-   [ ] Be able to delete deposits
+-   [ ] Resend to send auth emails https://resend.com/docs/send-with-supabase-smtp
 -   [ ] Add sum for open deposits on deposit list (view deposits would show deposit view. Add missing fields. Only for open deposits)

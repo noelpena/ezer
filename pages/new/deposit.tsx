@@ -33,6 +33,7 @@ import formatDate from "@/utils/formatDate";
 import { useRouter } from "next/router";
 import supabaseDate from "@/utils/supabaseDate";
 import _ from "lodash";
+import { showToast, updateToast } from "@/utils/notification";
 
 type NewDepositProps = {
 	session: Session;
@@ -41,9 +42,10 @@ type NewDepositProps = {
 
 export default function NewDeposit({ session, deposit_data }: NewDepositProps) {
 	const [btnIsDisabled, setBtnIsDisabled] = useState<boolean>(false);
+	const [depositData, setDepositData] = useState<Deposit[]>(deposit_data);
 	const router = useRouter();
 
-	const rows = deposit_data.map((deposit) => (
+	const rows = depositData.map((deposit) => (
 		<Table.Tr key={deposit.id}>
 			<Table.Td>{capitalize(deposit.deposit_type)}</Table.Td>
 			<Table.Td>{formatDate(deposit.deposit_date)}</Table.Td>
@@ -97,6 +99,13 @@ export default function NewDeposit({ session, deposit_data }: NewDepositProps) {
 
 	const submitNewDeposit = async (values: any) => {
 		setBtnIsDisabled(true);
+		showToast(
+			"new-deposit",
+			"Loading...",
+			"Saving new deposit record to the database.",
+			"blue",
+			true
+		);
 		var newData = _.cloneDeep(values);
 		newData.amount = parseInt(
 			(parseFloat(newData.amount) * 100).toFixed(2)
@@ -112,13 +121,29 @@ export default function NewDeposit({ session, deposit_data }: NewDepositProps) {
 
 		if (error) {
 			console.error(error);
+			updateToast(
+				"new-deposit",
+				"Failed.",
+				"Something went wrong when adding new deposit to the database. " +
+					error,
+				"red"
+			);
+		} else {
+			// handle error, add logging
+
+			//if deposit is not closed
+			if (!data[0].is_closed as boolean) {
+				setDepositData([...depositData, data[0]]);
+			}
+			depositForm.reset();
+			updateToast(
+				"new-deposit",
+				"Success!",
+				"New deposit added to the database.",
+				"green"
+			);
 		}
-		// handle error, add logging
 
-		//if deposit is not closed
-		// update deposit_data array to show new deposit in list
-
-		router.reload();
 		setBtnIsDisabled(false);
 	};
 
@@ -129,7 +154,7 @@ export default function NewDeposit({ session, deposit_data }: NewDepositProps) {
 			</Head>
 			<Layout session={session}>
 				<div className="h-screen max-w-screen-lg mt-6 mb-12 mx-4">
-					{deposit_data.length > 0 && (
+					{depositData.length > 0 && (
 						<>
 							<Title order={2}>Open Deposits</Title>
 							<Table striped withTableBorder>
@@ -148,7 +173,11 @@ export default function NewDeposit({ session, deposit_data }: NewDepositProps) {
 							<Button
 								variant="outline"
 								color="yellow"
-								onClick={() => {}}
+								onClick={() => {
+									router.push(
+										"/view/deposits?is_closed=true"
+									);
+								}}
 							>
 								View Closed Deposits
 							</Button>

@@ -2,6 +2,7 @@ import Layout from "@/components/Layout";
 import { Deposit, Supabase_Response } from "@/types/models";
 import addCommasToAmount from "@/utils/addCommasToAmount";
 import formatDate from "@/utils/formatDate";
+import { showToast, updateToast } from "@/utils/notification";
 import { createSupabaseReqResClient } from "@/utils/supabase";
 import supabaseDate from "@/utils/supabaseDate";
 import {
@@ -69,6 +70,13 @@ export default function EditDeposit({
 
 	const submitEditDeposit = async (values: any) => {
 		setBtnIsDisabled(true);
+		showToast(
+			"edit-deposit",
+			"Loading...",
+			"Editing deposit.",
+			"blue",
+			true
+		);
 		var newData = _.cloneDeep(values);
 		newData.amount = parseInt(
 			(parseFloat(newData.amount) * 100).toFixed(2)
@@ -85,11 +93,24 @@ export default function EditDeposit({
 		// console.log(data);
 		if (error) {
 			console.error(error);
+			updateToast(
+				"edit-deposit",
+				"Failed.",
+				"Deposit was not updated. " + error,
+				"red"
+			);
+		} else {
+			updateToast(
+				"edit-deposit",
+				"Success!",
+				"Deposit Updated.",
+				"green"
+			);
+			depositForm.setValues({ ...newData, amount: newData.amount / 100 });
 		}
 		// // handle error, add logging
 
 		// setDepositData(data[0]);
-		depositForm.setValues({ ...newData, amount: newData.amount / 100 });
 
 		setBtnIsDisabled(false);
 	};
