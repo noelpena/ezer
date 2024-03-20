@@ -11,7 +11,7 @@ import {
 } from "@/utils/supabase";
 import type { GetServerSidePropsContext } from "next";
 import { Session } from "@supabase/gotrue-js/src/lib/types";
-import { Text, Title } from "@mantine/core";
+import { Container, Text, Title } from "@mantine/core";
 import Layout from "@/components/Layout";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -62,45 +62,46 @@ const Home = ({ session, auth_view }: AppProps) => {
 				<>
 					<main
 						id="main"
-						className={`min-h-screen items-center p-12 ${inter.className}`}
+						className={`min-h-screen items-center md:p-12 ${inter.className}`}
 					>
-						{/* <h1>Ezer Login</h1> */}
-						<Title order={1}>Ezer Login</Title>
-						<Auth
-							supabaseClient={supabase}
-							appearance={{ theme: ThemeSupa }}
-							// theme="dark"
-							// providers={["google"]}
-							providers={[]}
-							showLinks={false}
-							view={authView}
-						/>
-						{authView == "sign_in" ? (
-							<Text
-								className="text-center text-stone-500"
-								size="sm"
-							>
-								Having trouble logging in?{" "}
-								<a
-									onClick={() => changeAuth("magic_link")}
-									className="cursor-pointer text-blue-500"
+						<Container>
+							<Title order={1}>Ezer Login</Title>
+							<Auth
+								supabaseClient={supabase}
+								appearance={{ theme: ThemeSupa }}
+								// theme="dark"
+								// providers={["google"]}
+								providers={[]}
+								showLinks={false}
+								view={authView}
+							/>
+							{authView == "sign_in" ? (
+								<Text
+									className="text-center text-stone-500"
+									size="sm"
 								>
-									Login with Magic Link
-								</a>
-							</Text>
-						) : (
-							<Text
-								className="text-center text-stone-500"
-								size="sm"
-							>
-								<a
-									onClick={() => changeAuth("sign_in")}
-									className="cursor-pointer text-blue-500"
+									Having trouble logging in?{" "}
+									<a
+										onClick={() => changeAuth("magic_link")}
+										className="cursor-pointer text-blue-500"
+									>
+										Send login link to your email address
+									</a>
+								</Text>
+							) : (
+								<Text
+									className="text-center text-stone-500"
+									size="sm"
 								>
-									Login using email and password
-								</a>
-							</Text>
-						)}
+									<a
+										onClick={() => changeAuth("sign_in")}
+										className="cursor-pointer text-blue-500"
+									>
+										Login using email and password
+									</a>
+								</Text>
+							)}
+						</Container>
 					</main>
 				</>
 			) : (
