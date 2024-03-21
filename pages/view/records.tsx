@@ -1,6 +1,15 @@
 import Head from "next/head";
 
-import { Button, SimpleGrid, Table, Title } from "@mantine/core";
+import {
+	Button,
+	Flex,
+	Pagination,
+	Select,
+	SimpleGrid,
+	Table,
+	Text,
+	Title,
+} from "@mantine/core";
 import { createSupabaseReqResClient } from "@/utils/supabase";
 
 import "@mantine/core/styles.layer.css";
@@ -17,6 +26,7 @@ import { Session } from "@supabase/supabase-js";
 import formatDate from "@/utils/formatDate";
 import { useRouter } from "next/router";
 import { IconRefresh } from "@tabler/icons-react";
+import { useState } from "react";
 
 type ViewDepositProps = {
 	session: Session;
@@ -29,7 +39,23 @@ export default function ViewRecords({
 }: ViewDepositProps) {
 	const router = useRouter();
 
-	const rows = record_data.map((record) => {
+	// const recordsPerPage = 25;
+	const [recordsPerPage, setRecordsPerPage] = useState<number>(25);
+	const [currentPage, setCurrentPage] = useState(1);
+
+	const startIndex = (currentPage - 1) * recordsPerPage;
+	const endIndex = startIndex + recordsPerPage;
+	const currentRecords = record_data.slice(startIndex, endIndex);
+
+	const totalPages = Math.ceil(record_data.length / recordsPerPage);
+	console.log(totalPages);
+
+	const handlePageChange = (page: number) => {
+		setCurrentPage(page);
+		// router.push(`/view/records?page=${page}`);
+	};
+
+	const rows = currentRecords.map((record) => {
 		if (record.amount && record.id) {
 			return (
 				<Table.Tr key={record.id}>
@@ -85,6 +111,7 @@ export default function ViewRecords({
 							Refresh List
 						</Button>
 					</SimpleGrid>
+
 					{record_data.length > 0 ? (
 						<>
 							<Table striped withTableBorder>
@@ -103,7 +130,34 @@ export default function ViewRecords({
 								</Table.Thead>
 								<Table.Tbody>{rows}</Table.Tbody>
 							</Table>
-							<br />
+							<Flex
+								justify="space-between"
+								className="mb-4 flex items-center bg-neutral-200 p-4"
+								direction={{ base: "column", sm: "row" }}
+							>
+								<div>
+									<Text
+										size="md"
+										className="text-right italic !inline-block"
+									>
+										Records per page
+									</Text>
+									<Select
+										className="!inline-block w-24 mx-2 md:mb-0 mb-2"
+										data={["25", "50", "100"]}
+										value={recordsPerPage.toString()}
+										//@ts-ignore
+										onChange={setRecordsPerPage}
+									/>
+								</div>
+								<Pagination
+									className="!inline-block text-right"
+									total={totalPages}
+									value={currentPage}
+									onChange={handlePageChange}
+									withEdges
+								/>
+							</Flex>
 						</>
 					) : (
 						<>
@@ -131,10 +185,18 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
 	} = await supabase.auth.getSession();
 
 	try {
+		const currentPage = ctx.query.page
+			? parseInt(ctx.query.page as string)
+			: 1;
+		const recordsPerPage = 50;
+		const startIndex = (currentPage - 1) * recordsPerPage;
+		console.log(currentPage, startIndex);
+
 		const record_res: Supabase_Response<Record[]> = await supabase
 			.from("records_view")
 			.select("*")
-			.range(0, 50);
+			.range(0, 1000);
+		//.range(startIndex, startIndex + recordsPerPage - 1);
 		// .order("date", { ascending: false });
 
 		const { data: record_data, error: record_error } = record_res;

@@ -15,3 +15,4 @@
 -   [ ] Be able to delete deposits
 -   [x] Resend to send auth emails
 -   [ ] Add sum for open deposits on deposit list (view deposits would show deposit view. Add missing fields. Only for open deposits)
+-   [ ] Error after login..?
