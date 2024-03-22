@@ -164,24 +164,21 @@ export default function ViewRecords({
 	};
 
 	const handlePerPageChange = (n: string | null) => {
-		if (n) {
-			setRecordsPerPage(parseInt(n));
-			const newQuery = { ...query, per_page: n };
-			const params = new URLSearchParams();
-
-			for (const [key, value] of Object.entries(newQuery)) {
-				if (value) {
-					params.append(key, value);
-				}
-			}
-
-			const origin =
-				typeof window !== "undefined" ? window.location.origin : "";
-			const newUrl = new URL(origin + router.asPath);
-			newUrl.search = params.toString();
-
-			router.push(newUrl);
-		}
+		// if (n) {
+		// 	setRecordsPerPage(parseInt(n));
+		// 	const newQuery = { ...query, per_page: n };
+		// 	const params = new URLSearchParams();
+		// 	for (const [key, value] of Object.entries(newQuery)) {
+		// 		if (value) {
+		// 			params.append(key, value);
+		// 		}
+		// 	}
+		// 	const origin =
+		// 		typeof window !== "undefined" ? window.location.origin : "";
+		// 	const newUrl = new URL(origin + router.asPath);
+		// 	newUrl.search = params.toString();
+		// 	router.push(newUrl);
+		// }
 	};
 
 	const rows = currentRecords.map((record) => {

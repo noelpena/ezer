@@ -22,7 +22,7 @@ type AppProps = {
 	member_data: Member[];
 };
 
-export default function diezmo({ session, member_data }: AppProps) {
+export default function Diezmo({ session, member_data }: AppProps) {
 	const [selectMember, setSelectedMember] = useState<string>("");
 	const [diezmos, setDiezmos] = useState<Record[]>([]);
 	const [total, setTotal] = useState<number>(0);
