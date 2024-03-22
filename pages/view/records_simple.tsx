@@ -47,37 +47,42 @@ export default function ViewRecords({
 	const { query } = router;
 	const supabase = createSupabaseFrontendClient();
 
-	const [recordData, setRecordData] = useState(() => {
-		const newRecordData = [];
-		newRecordData[0] = record_data;
-		return newRecordData;
-	});
+	// const [recordData, setRecordData] = useState(() => {
+	// 	const newRecordData = [];
+	// 	newRecordData[0] = record_data;
+	// 	return newRecordData;
+	// });
 
-	const [recordsPerPage, setRecordsPerPage] =
-		useState<number>(records_per_page);
 	const [currentPage, setCurrentPage] = useState(1);
-	const [totalPages, setTotalPages] = useState<number>(1);
+	// const [recordsPerPage, setRecordsPerPage] =
+	// 	useState<number>(records_per_page);
+	// const [totalPages, setTotalPages] = useState<number>(1);
+	// const currentRecords = recordData[currentPage - 1];
 
-	const currentRecords = recordData[currentPage - 1];
+	const recordsPerPage = 25;
+	const startIndex = (currentPage - 1) * recordsPerPage;
+	const endIndex = startIndex + recordsPerPage;
+	const currentRecords = record_data.slice(startIndex, endIndex);
+	const totalPages = Math.ceil(record_data.length / recordsPerPage);
 
-	useEffect(() => {
-		async function getRecordCount() {
-			const { data, error, count } = await supabase
-				.from("records_view")
-				.select("*", { count: "exact", head: true });
+	// useEffect(() => {
+	// 	async function getRecordCount() {
+	// 		const { data, error, count } = await supabase
+	// 			.from("records_view")
+	// 			.select("*", { count: "exact", head: true });
 
-			if (count) {
-				setTotalPages(Math.ceil(count / recordsPerPage));
-			}
+	// 		if (count) {
+	// 			setTotalPages(count / recordsPerPage);
+	// 		}
 
-			if (error) {
-				console.error(error);
-			}
-		}
-		getRecordCount();
+	// 		if (error) {
+	// 			console.error(error);
+	// 		}
+	// 	}
+	// 	getRecordCount();
 
-		handlePageChange(currentPage, recordsPerPage);
-	}, [recordsPerPage]);
+	// 	handlePageChange(currentPage, recordsPerPage);
+	// }, [recordsPerPage]);
 
 	async function getRecordsForPage(page: number) {
 		const offset = (page - 1) * recordsPerPage;
@@ -95,59 +100,60 @@ export default function ViewRecords({
 		numOfRecords: number = recordsPerPage
 	) => {
 		// add loading
-		showToast(
-			"loading-page",
-			"Loading records...",
-			"",
-			"blue",
-			true,
-			false
-		);
+		// showToast(
+		// 	"loading-page",
+		// 	"Loading records...",
+		// 	"",
+		// 	"blue",
+		// 	true,
+		// 	false
+		// );
 
-		if (recordData[page - 1] === undefined) {
-			const { records, error } = await getRecordsForPage(page);
+		// if (recordData[page - 1] === undefined) {
+		// 	const { records, error } = await getRecordsForPage(page);
 
-			if (records) {
-				setRecordData((prevRecordData) => {
-					const updatedRecordData = [];
-					prevRecordData.map((arrRecord, i) => {
-						updatedRecordData[i] = arrRecord;
-					});
+		// 	if (records) {
+		// 		setRecordData((prevRecordData) => {
+		// 			const updatedRecordData = [];
+		// 			prevRecordData.map((arrRecord, i) => {
+		// 				updatedRecordData[i] = arrRecord;
+		// 			});
 
-					updatedRecordData[page - 1] = records;
+		// 			updatedRecordData[page - 1] = records;
 
-					return updatedRecordData;
-				});
-			}
-		} else {
-			if (numOfRecords !== recordData[page - 1].length) {
-				const { records, error } = await getRecordsForPage(page);
+		// 			return updatedRecordData;
+		// 		});
+		// 	}
+		// } else {
+		// 	if (numOfRecords !== recordData[page - 1].length) {
+		// 		const { records, error } = await getRecordsForPage(page);
 
-				if (records) {
-					setRecordData((prevRecordData) => {
-						const updatedRecordData = [];
-						prevRecordData.map((arrRecord, i) => {
-							updatedRecordData[i] = arrRecord;
-						});
+		// 		if (records) {
+		// 			setRecordData((prevRecordData) => {
+		// 				const updatedRecordData = [];
+		// 				prevRecordData.map((arrRecord, i) => {
+		// 					updatedRecordData[i] = arrRecord;
+		// 				});
 
-						updatedRecordData[page - 1] = records;
+		// 				updatedRecordData[page - 1] = records;
 
-						return updatedRecordData;
-					});
-				}
-			}
-		}
+		// 				return updatedRecordData;
+		// 			});
+		// 		}
+		// 	}
+		// }
+		console.log(page);
 		setCurrentPage(page);
-		setTimeout(() => {
-			updateToast(
-				"loading-page",
-				"Finished Loading!",
-				"",
-				"green",
-				false,
-				1000
-			);
-		}, 500);
+		// setTimeout(() => {
+		// 	updateToast(
+		// 		"loading-page",
+		// 		"Finished Loading!",
+		// 		"",
+		// 		"green",
+		// 		false,
+		// 		1000
+		// 	);
+		// }, 500);
 		// router.push(`/view/records?page=${page}`);
 	};
 
@@ -248,11 +254,11 @@ export default function ViewRecords({
 								<Table.Tbody>{rows}</Table.Tbody>
 							</Table>
 							<Flex
-								justify="space-between"
+								justify="center"
 								className="mb-4 flex items-center bg-neutral-200 p-4"
 								direction={{ base: "column", sm: "row" }}
 							>
-								<div>
+								{/* <div>
 									<Text
 										size="sm"
 										className="text-right !inline-block"
@@ -268,7 +274,7 @@ export default function ViewRecords({
 											handlePerPageChange(e);
 										}}
 									/>
-								</div>
+								</div> */}
 								<Pagination
 									size="sm"
 									className="!inline-block text-right"
@@ -304,7 +310,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
 			? parseInt(ctx.query.page as string)
 			: 1;
 
-		let records_per_page = 25;
+		let records_per_page = 500;
 		const perPage = Array.isArray(ctx.query.per_page)
 			? ctx.query.per_page[0]
 			: ctx.query.per_page;

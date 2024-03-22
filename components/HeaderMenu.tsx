@@ -51,7 +51,21 @@ const links = [
 			// { link: "/blog", label: "Balance" },
 		],
 	},
-	{ link: "/about", label: "Reports", icon: IconClipboardData },
+	{
+		label: "Reports",
+		icon: IconFilePlus,
+		links: [
+			{ link: "/reports/diezmo", label: "Diezmo Report" },
+			{
+				link: "/reports/department",
+				label: "Departamento Income/Expense",
+			},
+			{ link: "/reports/sociedad", label: "Sociedad Income/Expense" },
+			// { link: "/resources", label: "Department" },
+			// { link: "/blog", label: "Balance" },
+		],
+	},
+	// { link: "/about", label: "Reports", icon: IconClipboardData },
 	{ link: "/admin", label: "Admin", icon: IconClipboardData },
 ];
 

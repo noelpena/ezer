@@ -220,7 +220,7 @@ export default function NewDeposit({ session, deposit_data }: NewDepositProps) {
 							/>
 
 							<NumberInput
-								label="Amount"
+								label="Deposit Amount"
 								placeholder="Dollars"
 								prefix="$"
 								min={0}
