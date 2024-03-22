@@ -10,7 +10,10 @@ import {
 	Text,
 	Title,
 } from "@mantine/core";
-import { createSupabaseReqResClient } from "@/utils/supabase";
+import {
+	createSupabaseFrontendClient,
+	createSupabaseReqResClient,
+} from "@/utils/supabase";
 
 import "@mantine/core/styles.layer.css";
 import "@mantine/dates/styles.layer.css";
@@ -26,33 +29,140 @@ import { Session } from "@supabase/supabase-js";
 import formatDate from "@/utils/formatDate";
 import { useRouter } from "next/router";
 import { IconRefresh } from "@tabler/icons-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { showToast, updateToast } from "@/utils/notification";
 
 type ViewDepositProps = {
 	session: Session;
 	record_data: RecordsView[];
+	records_per_page: number;
 };
 
 export default function ViewRecords({
 	session,
 	record_data,
+	records_per_page,
 }: ViewDepositProps) {
 	const router = useRouter();
+	const { query } = router;
+	const supabase = createSupabaseFrontendClient();
 
-	// const recordsPerPage = 25;
-	const [recordsPerPage, setRecordsPerPage] = useState<number>(25);
+	const [recordData, setRecordData] = useState(() => {
+		const newRecordData = [];
+		newRecordData[0] = record_data;
+		return newRecordData;
+	});
+	// const [recordData, setRecordData] = useState([{page: 1, data: record_data}]);
+
+	const [recordsPerPage, setRecordsPerPage] =
+		useState<number>(records_per_page);
 	const [currentPage, setCurrentPage] = useState(1);
+	const [totalPages, setTotalPages] = useState<number>(1);
 
 	const startIndex = (currentPage - 1) * recordsPerPage;
 	const endIndex = startIndex + recordsPerPage;
-	const currentRecords = record_data.slice(startIndex, endIndex);
+	const currentRecords = recordData[currentPage - 1];
 
-	const totalPages = Math.ceil(record_data.length / recordsPerPage);
-	console.log(totalPages);
+	const [runOnce, setRunOnce] = useState(true);
+	useEffect(() => {
+		async function getRecordCount() {
+			const { data, error, count } = await supabase
+				.from("records_view")
+				.select("*", { count: "exact", head: true });
 
-	const handlePageChange = (page: number) => {
+			if (count) {
+				setTotalPages(count / recordsPerPage);
+			}
+
+			if (error) {
+				console.error(error);
+			}
+		}
+		// if (runOnce) {
+		setRunOnce(false);
+		getRecordCount();
+		// }
+
+		handlePageChange(currentPage, recordsPerPage);
+	}, [recordsPerPage]);
+
+	async function getRecordsForPage(page: number) {
+		const offset = (page - 1) * recordsPerPage;
+
+		const res: Supabase_Response<RecordsView> = await supabase
+			.from("records_view")
+			.select("*")
+			.range(offset, offset + recordsPerPage - 1);
+		console.log(res.data);
+
+		return { records: res.data, error: res.error };
+	}
+
+	const handlePageChange = async (
+		page: number,
+		numOfRecords: number = recordsPerPage
+	) => {
+		// add loading
+		showToast(
+			"loading-page",
+			"Loading records...",
+			"",
+			"blue",
+			true,
+			false
+		);
+
+		if (recordData[page - 1] === undefined) {
+			const { records, error } = await getRecordsForPage(page);
+
+			if (records) {
+				setRecordData((prevRecordData) => {
+					const updatedRecordData = [];
+					prevRecordData.map((arrRecord, i) => {
+						updatedRecordData[i] = arrRecord;
+					});
+
+					updatedRecordData[page - 1] = records;
+
+					return updatedRecordData;
+				});
+			}
+		} else {
+			if (numOfRecords !== recordData[page - 1].length) {
+				const { records, error } = await getRecordsForPage(page);
+
+				if (records) {
+					setRecordData((prevRecordData) => {
+						const updatedRecordData = [];
+						prevRecordData.map((arrRecord, i) => {
+							updatedRecordData[i] = arrRecord;
+						});
+
+						updatedRecordData[page - 1] = records;
+
+						return updatedRecordData;
+					});
+				}
+			}
+		}
 		setCurrentPage(page);
+		setTimeout(() => {
+			updateToast(
+				"loading-page",
+				"Finished Loading!",
+				"",
+				"green",
+				false,
+				1500
+			);
+		}, 800);
 		// router.push(`/view/records?page=${page}`);
+	};
+
+	const handleRecordEdit = (id: string | null) => {
+		if (id !== null) {
+			router.push(`/edit/record/${id}`);
+		}
 	};
 
 	const rows = currentRecords.map((record) => {
@@ -84,12 +194,31 @@ export default function ViewRecords({
 		}
 	});
 
-	const handleRecordEdit = (id: string | null) => {
-		if (id !== null) {
-			router.push(`/edit/record/${id}`);
+	const handlePerPageChange = (n: string | null) => {
+		if (n) {
+			setRecordsPerPage(parseInt(n));
 		}
-	};
+		const newQuery: { [key: string]: string | null } = {
+			...query,
+			per_page: n,
+		};
+		const params = new URLSearchParams();
 
+		for (const [key, value] of Object.entries(newQuery)) {
+			if (value) {
+				params.append(key, value);
+			}
+		}
+		const origin =
+			typeof window !== "undefined" && window.location.origin
+				? window.location.origin
+				: "";
+
+		const newUrl = new URL(origin + router.asPath);
+		newUrl.search = params.toString();
+
+		router.push(newUrl);
+	};
 	return (
 		<>
 			<Head>
@@ -137,8 +266,8 @@ export default function ViewRecords({
 							>
 								<div>
 									<Text
-										size="md"
-										className="text-right italic !inline-block"
+										size="sm"
+										className="text-right !inline-block"
 									>
 										Records per page
 									</Text>
@@ -147,10 +276,13 @@ export default function ViewRecords({
 										data={["25", "50", "100"]}
 										value={recordsPerPage.toString()}
 										//@ts-ignore
-										onChange={setRecordsPerPage}
+										onChange={(e) => {
+											handlePerPageChange(e);
+										}}
 									/>
 								</div>
 								<Pagination
+									size="sm"
 									className="!inline-block text-right"
 									total={totalPages}
 									value={currentPage}
@@ -174,11 +306,6 @@ export default function ViewRecords({
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
 	const supabase = createSupabaseReqResClient(ctx);
-	let is_closed: boolean = false;
-
-	if (ctx.query.is_closed !== undefined && ctx.query.is_closed === "true") {
-		is_closed = true;
-	}
 
 	const {
 		data: { session },
@@ -188,21 +315,27 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
 		const currentPage = ctx.query.page
 			? parseInt(ctx.query.page as string)
 			: 1;
-		const recordsPerPage = 50;
-		const startIndex = (currentPage - 1) * recordsPerPage;
-		console.log(currentPage, startIndex);
 
-		const record_res: Supabase_Response<Record[]> = await supabase
+		let records_per_page = 25;
+		const perPage = Array.isArray(ctx.query.per_page)
+			? ctx.query.per_page[0]
+			: ctx.query.per_page;
+		if (perPage) {
+			records_per_page = parseInt(perPage);
+		}
+		// const startIndex = (currentPage - 1) * records_per_page;
+
+		const record_res: Supabase_Response<RecordsView[]> = await supabase
 			.from("records_view")
 			.select("*")
-			.range(0, 1000);
-		//.range(startIndex, startIndex + recordsPerPage - 1);
+			.range(0, records_per_page - 1);
+		//.range(startIndex, startIndex + records_per_page - 1);
 		// .order("date", { ascending: false });
 
 		const { data: record_data, error: record_error } = record_res;
 
 		return {
-			props: { session, record_data, is_closed },
+			props: { session, record_data, records_per_page },
 		};
 	} catch (error) {
 		console.error(
