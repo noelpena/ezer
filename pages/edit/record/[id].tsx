@@ -9,13 +9,16 @@ import {
 } from "@/types/models";
 import addCommasToAmount from "@/utils/addCommasToAmount";
 import formatDate from "@/utils/formatDate";
+import { showToast, updateToast } from "@/utils/notification";
 import { createSupabaseReqResClient } from "@/utils/supabase";
 import {
+	Text,
 	Anchor,
 	Breadcrumbs,
 	Button,
 	Container,
-	Flex,
+	Group,
+	Modal,
 	NumberInput,
 	Select,
 	SimpleGrid,
@@ -25,11 +28,15 @@ import {
 import { DateInput } from "@mantine/dates";
 import { useForm, zodResolver } from "@mantine/form";
 import { Session } from "@supabase/supabase-js";
+import { IconArrowLeft, IconTrash } from "@tabler/icons-react";
 import _ from "lodash";
 import Head from "next/head";
+import { useRouter } from "next/router";
 import { GetServerSidePropsContext } from "next/types";
 import { useState } from "react";
-import { record, z } from "zod";
+import { z } from "zod";
+
+import { useDisclosure } from "@mantine/hooks";
 
 type mantineSelectData = {
 	value: string;
@@ -55,6 +62,10 @@ export default function EditRecord({
 }: EditRecordProps) {
 	const [btnIsDisabled, setBtnIsDisabled] = useState<boolean>(false);
 	const [recordData, setRecordData] = useState<Record>(record_data[0]);
+
+	const [opened, { open, close }] = useDisclosure(false);
+
+	const router = useRouter();
 
 	const [showMemberDropdown, setShowMemberDropdown] = useState<
 		boolean | null
@@ -101,16 +112,9 @@ export default function EditRecord({
 				required_error: "Please select a date and time",
 				invalid_type_error: "That's not a date!",
 			})
-			.nullable()
-			.or(z.string().nullable()),
+			.nullable(),
 		status: z.enum(["recorded", "deposited"]),
-		created_at: z
-			.date({
-				required_error: "Please select a date and time",
-				invalid_type_error: "That's not a date!",
-			})
-			.nullable()
-			.or(z.string().nullable()),
+		created_at: z.date(),
 	});
 
 	const tesoreriaForm = useForm({
@@ -125,12 +129,14 @@ export default function EditRecord({
 			),
 			income_expense: recordData.income_expense,
 			payment_type: recordData.payment_type,
-			date: new Date(formatDate(recordData.date)),
+			date: new Date(recordData.date),
 			description_notes: recordData.description_notes,
 			deposit_id: recordData.deposit_id,
-			deposit_date: new Date(formatDate(recordData.deposit_date || "")),
+			deposit_date: recordData.deposit_date
+				? new Date(recordData.deposit_date)
+				: null,
 			status: recordData.status,
-			created_at: recordData.created_at,
+			created_at: new Date(recordData.created_at),
 		},
 	});
 
@@ -240,6 +246,36 @@ export default function EditRecord({
 		setBtnIsDisabled(false);
 	};
 
+	const deleteRecord = async () => {
+		showToast(
+			"delete-record",
+			"Loading...",
+			"Deleting record.",
+			"blue",
+			true
+		);
+		const deleteRecordResponse = await fetch("/api/record/", {
+			method: "DELETE",
+			body: JSON.stringify({ id: recordData.id }),
+		});
+		if (deleteRecordResponse.status === 204) {
+			updateToast(
+				"delete-record",
+				"Success!",
+				"Record was deleted.",
+				"green"
+			);
+			router.push("/view/records");
+		} else {
+			updateToast(
+				"delete-record",
+				"Failed.",
+				"Record was not deleted. " + deleteRecordResponse.statusText,
+				"red"
+			);
+		}
+	};
+
 	const items: any = [
 		{ title: "Records", href: "/view/records" },
 		{ title: "Edit Record", href: "##" },
@@ -269,8 +305,6 @@ export default function EditRecord({
 	};
 
 	const handleDepositDate = (id: any) => {
-		console.log(id);
-
 		deposit_data.forEach((deposit) => {
 			if (id === deposit.id) {
 				tesoreriaForm.setValues({
@@ -296,9 +330,29 @@ export default function EditRecord({
 					<Breadcrumbs separator=">" mt="xs">
 						{breadCrumbItems}
 					</Breadcrumbs>
-					<Flex className="mt-8" direction="column">
+
+					<SimpleGrid className="my-4" cols={{ base: 1, xs: 2 }}>
 						<Title order={2}>Edit Record</Title>
-					</Flex>
+
+						<Group justify="flex-end">
+							<Button
+								size="xs"
+								color="gray"
+								leftSection={<IconArrowLeft size={18} />}
+								onClick={() => router.back()}
+							>
+								Go Back
+							</Button>
+							<Button
+								size="xs"
+								leftSection={<IconTrash size={18} />}
+								color="red"
+								onClick={open}
+							>
+								Delete Record
+							</Button>
+						</Group>
+					</SimpleGrid>
 
 					<form
 						className="flex flex-col gap-y-6 mt-3 mb-2"
@@ -459,6 +513,17 @@ export default function EditRecord({
 						</Button>
 					</form>
 				</Container>
+				<Modal opened={opened} onClose={close} title="Delete Record?">
+					<Text>Are you sure you want to delete this record?</Text>
+					<Group grow className="mt-4">
+						<Button color="red" onClick={deleteRecord}>
+							Delete
+						</Button>
+						<Button color="gray" onClick={close}>
+							Cancel
+						</Button>
+					</Group>
+				</Modal>
 			</Layout>
 		</>
 	);
@@ -503,7 +568,6 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
 		const { data: deposit_data, error: deposit_error } = deposit_res;
 
 		const { data: record_data, error: record_error } = record_res;
-
 		return {
 			props: {
 				record_data,

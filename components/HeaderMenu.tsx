@@ -14,6 +14,7 @@ import { useDisclosure } from "@mantine/hooks";
 import {
 	IconChevronDown,
 	IconLogout,
+	IconLogout2,
 	IconSwitchHorizontal,
 } from "@tabler/icons-react";
 import Image from "next/image";
@@ -151,8 +152,9 @@ const HeaderMenu = ({ isLoggedIn, handleSignOut }: AppProps) => {
 							color="gray"
 							onClick={handleSignOut}
 							className="!hidden md:!block"
+							leftSection={<IconLogout2 size={18} />}
 						>
-							Sign out
+							Log Out
 						</Button>
 					) : (
 						<Group visibleFrom="sm">

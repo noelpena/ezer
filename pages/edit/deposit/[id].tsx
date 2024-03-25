@@ -1,29 +1,35 @@
 import Layout from "@/components/Layout";
 import { Deposit, Supabase_Response } from "@/types/models";
-import addCommasToAmount from "@/utils/addCommasToAmount";
 import formatDate from "@/utils/formatDate";
 import { showToast, updateToast } from "@/utils/notification";
 import { createSupabaseReqResClient } from "@/utils/supabase";
-import supabaseDate from "@/utils/supabaseDate";
 import {
+	Text,
 	Anchor,
 	Breadcrumbs,
 	Button,
 	Container,
 	Flex,
+	Group,
+	Modal,
 	NumberInput,
 	Select,
+	SimpleGrid,
 	Textarea,
 	Title,
 } from "@mantine/core";
 import { DateInput } from "@mantine/dates";
 import { useForm, zodResolver } from "@mantine/form";
-import { Session } from "@supabase/supabase-js";
+import { PostgrestSingleResponse, Session } from "@supabase/supabase-js";
+import { IconArrowLeft, IconTrash } from "@tabler/icons-react";
 import _ from "lodash";
 import Head from "next/head";
+import router from "next/router";
 import { GetServerSidePropsContext } from "next/types";
 import { useState } from "react";
 import { z } from "zod";
+
+import { useDisclosure } from "@mantine/hooks";
 
 type EditDepositProps = {
 	session: Session;
@@ -36,6 +42,8 @@ export default function EditDeposit({
 }: EditDepositProps) {
 	const [btnIsDisabled, setBtnIsDisabled] = useState<boolean>(false);
 	const [depositData, setDepositData] = useState<Deposit>(deposit_data[0]);
+
+	const [opened, { open, close }] = useDisclosure(false);
 
 	const editDepositSchema = z.object({
 		id: z.string().uuid(),
@@ -115,6 +123,37 @@ export default function EditDeposit({
 		setBtnIsDisabled(false);
 	};
 
+	const deleteDeposit = async () => {
+		showToast(
+			"delete-deposit",
+			"Loading...",
+			"Deleting deposit.",
+			"blue",
+			true
+		);
+		const deleteDepositResponse = await fetch("/api/deposit/", {
+			method: "DELETE",
+			body: JSON.stringify({ id: depositData.id }),
+		});
+		console.log(deleteDepositResponse);
+		if (deleteDepositResponse.status === 204) {
+			updateToast(
+				"delete-deposit",
+				"Success!",
+				"Deposit was deleted.",
+				"green"
+			);
+			router.push("/view/deposits");
+		} else {
+			updateToast(
+				"delete-deposit",
+				"Failed.",
+				"Deposit was not deleted. " + deleteDepositResponse.statusText,
+				"red"
+			);
+		}
+	};
+
 	const items: any = [
 		{ title: "Deposits", href: "/view/deposits" },
 		{ title: "Edit Deposit", href: "##" },
@@ -142,7 +181,30 @@ export default function EditDeposit({
 						{breadCrumbItems}
 					</Breadcrumbs>
 					<Flex className="mt-8" direction="column">
-						<Title order={2}>Edit Deposit</Title>
+						{/* <Title order={2}>Edit Deposit</Title> */}
+
+						<SimpleGrid className="mb-4" cols={{ base: 1, xs: 2 }}>
+							<Title order={2}>Edit Deposit</Title>
+
+							<Group justify="flex-end">
+								<Button
+									size="xs"
+									color="gray"
+									leftSection={<IconArrowLeft size={18} />}
+									onClick={() => router.back()}
+								>
+									Go Back
+								</Button>
+								<Button
+									size="xs"
+									leftSection={<IconTrash size={18} />}
+									color="red"
+									onClick={open}
+								>
+									Delete Deposit
+								</Button>
+							</Group>
+						</SimpleGrid>
 
 						<form
 							className="flex flex-col gap-y-6 mt-3"
@@ -220,11 +282,22 @@ export default function EditDeposit({
 								type="submit"
 								loading={btnIsDisabled}
 							>
-								Submit
+								Save Deposit
 							</Button>
 						</form>
 					</Flex>
 				</Container>
+				<Modal opened={opened} onClose={close} title="Delete Deposit?">
+					<Text>Are you sure you want to delete this deposit?</Text>
+					<Group grow className="mt-4">
+						<Button color="red" onClick={deleteDeposit}>
+							Delete
+						</Button>
+						<Button color="gray" onClick={close}>
+							Cancel
+						</Button>
+					</Group>
+				</Modal>
 			</Layout>
 		</>
 	);

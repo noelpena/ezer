@@ -1,6 +1,6 @@
 import Head from "next/head";
 
-import { Button, SimpleGrid, Table, Title } from "@mantine/core";
+import { Button, Group, SimpleGrid, Table, Title } from "@mantine/core";
 import { createSupabaseReqResClient } from "@/utils/supabase";
 
 import "@mantine/core/styles.layer.css";
@@ -14,6 +14,7 @@ import Layout from "@/components/Layout";
 
 import { Session } from "@supabase/supabase-js";
 import { useRouter } from "next/router";
+import { IconPlus, IconUserPlus } from "@tabler/icons-react";
 
 type ViewMemberProps = {
 	session: Session;
@@ -65,27 +66,51 @@ export default function ViewMember({
 							{is_active ? "Active" : "Inactive"} Members
 						</Title>
 						{is_active ? (
-							<Button
-								variant="outline"
-								color="yellow"
-								onClick={() => {
-									router.push(
-										"/view/members?is_active=false"
-									);
-								}}
-							>
-								View Inactive Members
-							</Button>
+							<Group justify="flex-end">
+								<Button
+									rightSection={<IconUserPlus size={14} />}
+									variant="outline"
+									color="green"
+									onClick={() => {
+										router.push("/new/member");
+									}}
+								>
+									Add New Member
+								</Button>
+								<Button
+									variant="outline"
+									color="yellow"
+									onClick={() => {
+										router.push(
+											"/view/members?is_active=false"
+										);
+									}}
+								>
+									View Inactive Members
+								</Button>
+							</Group>
 						) : (
-							<Button
-								variant="outline"
-								color="blue"
-								onClick={() => {
-									router.push("/view/members");
-								}}
-							>
-								View Active Members
-							</Button>
+							<Group justify="flex-end">
+								<Button
+									rightSection={<IconUserPlus size={14} />}
+									variant="outline"
+									color="green"
+									onClick={() => {
+										router.push("/new/member");
+									}}
+								>
+									Add New Member
+								</Button>
+								<Button
+									variant="outline"
+									color="blue"
+									onClick={() => {
+										router.push("/view/members");
+									}}
+								>
+									View Active Members
+								</Button>
+							</Group>
 						)}
 					</SimpleGrid>
 					{member_data.length > 0 ? (

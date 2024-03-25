@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from "uuid";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { createApiRouteClient } from "@/utils/supabase";
 import { Supabase_Response } from "@/types/models";
-import { PostgrestError } from "@supabase/supabase-js";
+import { PostgrestError, PostgrestSingleResponse } from "@supabase/supabase-js";
 
 type Data = {
 	data: object | null;
@@ -72,6 +72,38 @@ export async function editResource<T>(
 			data: null,
 			error: editResponse.error,
 			message: editResponse.error.message,
+		});
+	}
+}
+
+export async function deleteResource(
+	req: NextApiRequest,
+	res: NextApiResponse<Data>,
+	tableName: string
+) {
+	const supabase = createApiRouteClient(req, res);
+
+	let body = req.body;
+	if (typeof req.body === "string") {
+		body = JSON.parse(req.body);
+	}
+
+	const deleteResponse: PostgrestSingleResponse<null> = await supabase
+		.from(tableName)
+		.delete()
+		.eq("id", body.id);
+
+	if (deleteResponse.status === 204) {
+		return res.status(204).json({
+			data: deleteResponse.data,
+			error: null,
+			message: "",
+		});
+	} else {
+		return res.status(500).json({
+			data: null,
+			error: deleteResponse.error,
+			message: "",
 		});
 	}
 }

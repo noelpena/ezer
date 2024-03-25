@@ -4,7 +4,17 @@ import React, { useState } from "react";
 import { zodResolver } from "mantine-form-zod-resolver";
 
 import { useForm } from "@mantine/form";
-import { Button, Flex, Select, TextInput, Title } from "@mantine/core";
+import {
+	Anchor,
+	Breadcrumbs,
+	Button,
+	Flex,
+	Group,
+	Select,
+	SimpleGrid,
+	TextInput,
+	Title,
+} from "@mantine/core";
 import { createSupabaseReqResClient } from "@/utils/supabase";
 
 import "@mantine/core/styles.layer.css";
@@ -18,6 +28,8 @@ import Layout from "@/components/Layout";
 import { Session } from "@supabase/supabase-js";
 import { useRouter } from "next/router";
 import _ from "lodash";
+import { showToast, updateToast } from "@/utils/notification";
+import { IconArrowLeft, IconTrash } from "@tabler/icons-react";
 
 type NewMemberProps = {
 	deposit_data: Member[];
@@ -45,6 +57,15 @@ export default function NewMember({ session, deposit_data }: NewMemberProps) {
 
 	const submitNewMember = async (values: any) => {
 		setBtnIsDisabled(true);
+
+		showToast(
+			"new-member",
+			"Loading...",
+			"Adding new member.",
+			"blue",
+			true
+		);
+
 		var newData = _.cloneDeep(values);
 		console.log(newData);
 
@@ -59,10 +80,25 @@ export default function NewMember({ session, deposit_data }: NewMemberProps) {
 			console.error(error);
 		}
 
-		// router.reload();
 		memberForm.reset();
+		updateToast("new-member", "Success!", "New member added.", "green");
 		setBtnIsDisabled(false);
 	};
+
+	const items: any = [
+		{ title: "Members", href: "/view/members" },
+		{ title: "Add New Member", href: "##" },
+	];
+
+	const breadCrumbItems = items.map((item: any, index: number) =>
+		index !== items.length - 1 ? (
+			<Anchor href={item.href} key={index}>
+				{item.title}
+			</Anchor>
+		) : (
+			<span key={index}>{item.title}</span>
+		)
+	);
 
 	return (
 		<>
@@ -71,8 +107,23 @@ export default function NewMember({ session, deposit_data }: NewMemberProps) {
 			</Head>
 			<Layout session={session}>
 				<div className="h-screen max-w-screen-lg mt-6 mb-12 mx-4">
+					<Breadcrumbs separator=">" mt="xs">
+						{breadCrumbItems}
+					</Breadcrumbs>
 					<Flex className="mt-8" direction="column">
-						<Title order={2}>Add New Member</Title>
+						<SimpleGrid cols={{ base: 1, xs: 2 }}>
+							<Title order={2}>Add New Member</Title>
+							<Group justify="flex-end">
+								<Button
+									size="xs"
+									color="gray"
+									leftSection={<IconArrowLeft size={18} />}
+									onClick={() => router.back()}
+								>
+									Go Back
+								</Button>
+							</Group>
+						</SimpleGrid>
 						<form
 							className="flex flex-col gap-y-6 mt-3"
 							id="form-add-record"
@@ -116,7 +167,7 @@ export default function NewMember({ session, deposit_data }: NewMemberProps) {
 								type="submit"
 								loading={btnIsDisabled}
 							>
-								Submit
+								Add New Member
 							</Button>
 						</form>
 					</Flex>

@@ -1,6 +1,6 @@
 import Head from "next/head";
 
-import { Button, SimpleGrid, Table, Title } from "@mantine/core";
+import { Button, SimpleGrid, Table, Title, Group } from "@mantine/core";
 import { createSupabaseReqResClient } from "@/utils/supabase";
 
 import "@mantine/core/styles.layer.css";
@@ -16,6 +16,7 @@ import Layout from "@/components/Layout";
 import { Session } from "@supabase/supabase-js";
 import formatDate from "@/utils/formatDate";
 import { useRouter } from "next/router";
+import { IconFilePlus } from "@tabler/icons-react";
 
 type ViewDepositProps = {
 	session: Session;
@@ -66,27 +67,52 @@ export default function ViewDeposit({
 							{is_closed ? "Closed" : "Open"} Deposits
 						</Title>
 						{is_closed ? (
-							<Button
-								variant="outline"
-								color="blue"
-								onClick={() => {
-									router.push("/view/deposits");
-								}}
-							>
-								View Open Deposits
-							</Button>
+							<Group justify="flex-end">
+								<Button
+									rightSection={<IconFilePlus size={14} />}
+									variant="outline"
+									color="green"
+									onClick={() => {
+										router.push("/new/deposit");
+									}}
+								>
+									Add New Deposit
+								</Button>
+
+								<Button
+									variant="outline"
+									color="blue"
+									onClick={() => {
+										router.push("/view/deposits");
+									}}
+								>
+									View Open Deposits
+								</Button>
+							</Group>
 						) : (
-							<Button
-								variant="outline"
-								color="yellow"
-								onClick={() => {
-									router.push(
-										"/view/deposits?is_closed=true"
-									);
-								}}
-							>
-								View Closed Deposits
-							</Button>
+							<Group justify="flex-end">
+								<Button
+									rightSection={<IconFilePlus size={14} />}
+									variant="outline"
+									color="green"
+									onClick={() => {
+										router.push("/new/deposit");
+									}}
+								>
+									Add New Deposit
+								</Button>
+								<Button
+									variant="outline"
+									color="yellow"
+									onClick={() => {
+										router.push(
+											"/view/deposits?is_closed=true"
+										);
+									}}
+								>
+									View Closed Deposits
+								</Button>
+							</Group>
 						)}
 					</SimpleGrid>
 					{deposit_data.length > 0 ? (

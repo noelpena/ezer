@@ -4,7 +4,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { createApiRouteClient } from "@/utils/supabase";
 import { Supabase_Response, Record, GoogleSheetView } from "@/types/models";
 import { PostgrestError } from "@supabase/supabase-js";
-import { editResource } from "../resource";
+import { editResource, deleteResource } from "../resource";
 
 type Data = {
 	data: object | null;
@@ -20,6 +20,8 @@ export default function handler(
 		return createNewRecord(req, res);
 	} else if (req.method === "PUT") {
 		return editResource<Record>(req, res, "records");
+	} else if (req.method === "DELETE") {
+		return deleteResource(req, res, "records");
 	} else {
 		return res
 			.status(405)

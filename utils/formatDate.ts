@@ -1,13 +1,19 @@
 function formatDate(inputDate: string) {
 	// Parse the input date string
-	var dateObj = new Date(inputDate);
+	const dateObj = new Date(inputDate);
 
-	const year = dateObj.getUTCFullYear();
-	const month = (dateObj.getUTCMonth() + 1).toString().padStart(2, "0"); // Months are zero-indexed
-	const day = dateObj.getUTCDate().toString().padStart(2, "0");
+	// // Check if the input is a valid date
+	if (isNaN(dateObj.getTime())) {
+		// Handle the case where the input is not a valid date
+		return "Invalid Date";
+	}
 
-	// Return formatted date string
-	return month + "/" + day + "/" + year;
+	// // Format the date as mm/dd/yyyy
+	const month = String(dateObj.getMonth() + 1).padStart(2, "0");
+	const day = String(dateObj.getDate()).padStart(2, "0");
+	const year = dateObj.getFullYear();
+
+	return `${month}/${day}/${year}`;
 }
 
 export default formatDate;

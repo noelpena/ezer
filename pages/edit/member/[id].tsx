@@ -2,6 +2,7 @@ import Layout from "@/components/Layout";
 import { Member, Supabase_Response } from "@/types/models";
 import { createSupabaseReqResClient } from "@/utils/supabase";
 import {
+	Modal,
 	Anchor,
 	Breadcrumbs,
 	Button,
@@ -10,7 +11,11 @@ import {
 	Select,
 	TextInput,
 	Title,
+	Group,
+	Text,
+	SimpleGrid,
 } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 import { useForm, zodResolver } from "@mantine/form";
 import { Session } from "@supabase/supabase-js";
 import _ from "lodash";
@@ -18,6 +23,9 @@ import Head from "next/head";
 import { GetServerSidePropsContext } from "next/types";
 import { useState } from "react";
 import { z } from "zod";
+import { showToast, updateToast } from "@/utils/notification";
+import { useRouter } from "next/router";
+import { IconArrowLeft, IconTrash } from "@tabler/icons-react";
 
 type EditMemberProps = {
 	session: Session;
@@ -27,6 +35,8 @@ type EditMemberProps = {
 export default function EditMember({ session, member_data }: EditMemberProps) {
 	const [btnIsDisabled, setBtnIsDisabled] = useState<boolean>(false);
 	const [memberData, setMemberData] = useState<Member>(member_data[0]);
+	const [opened, { open, close }] = useDisclosure(false);
+	const router = useRouter();
 
 	const editMemberSchema = z.object({
 		id: z.string().uuid(),
@@ -55,6 +65,7 @@ export default function EditMember({ session, member_data }: EditMemberProps) {
 
 	const submitEditMember = async (values: any) => {
 		setBtnIsDisabled(true);
+		showToast("edit-member", "Loading...", "Editing member.", "blue", true);
 		var newData = _.cloneDeep(values);
 
 		console.log(newData);
@@ -72,11 +83,43 @@ export default function EditMember({ session, member_data }: EditMemberProps) {
 		// handle error, add logging
 
 		setMemberData(data[0]);
+		updateToast("edit-member", "Success!", "Member was updated.", "green");
 		setBtnIsDisabled(false);
 	};
 
+	const deleteMember = async () => {
+		showToast(
+			"delete-member",
+			"Loading...",
+			"Deleting member.",
+			"blue",
+			true
+		);
+		const deleteMemberResponse = await fetch("/api/member/", {
+			method: "DELETE",
+			body: JSON.stringify({ id: memberData.id }),
+		});
+		if (deleteMemberResponse.status === 204) {
+			updateToast(
+				"delete-member",
+				"Success!",
+				"Member was deleted.",
+				"green"
+			);
+
+			router.push("/view/members");
+		} else {
+			updateToast(
+				"delete-member",
+				"Failed.",
+				"Member was not deleted. " + deleteMemberResponse.statusText,
+				"red"
+			);
+		}
+	};
+
 	const items: any = [
-		{ title: "Member", href: "/view/members" },
+		{ title: "Members", href: "/view/members" },
 		{ title: "Edit Member", href: "##" },
 	];
 
@@ -102,7 +145,28 @@ export default function EditMember({ session, member_data }: EditMemberProps) {
 						{breadCrumbItems}
 					</Breadcrumbs>
 					<Flex className="mt-8" direction="column">
-						<Title order={2}>Edit Member</Title>
+						<SimpleGrid className="mb-4" cols={{ base: 1, xs: 2 }}>
+							<Title order={2}>Edit Member</Title>
+
+							<Group justify="flex-end">
+								<Button
+									size="xs"
+									color="gray"
+									leftSection={<IconArrowLeft size={18} />}
+									onClick={() => router.back()}
+								>
+									Go Back
+								</Button>
+								<Button
+									size="xs"
+									leftSection={<IconTrash size={18} />}
+									color="red"
+									onClick={open}
+								>
+									Delete Member
+								</Button>
+							</Group>
+						</SimpleGrid>
 
 						<form
 							className="flex flex-col gap-y-6 mt-3"
@@ -147,11 +211,22 @@ export default function EditMember({ session, member_data }: EditMemberProps) {
 								type="submit"
 								loading={btnIsDisabled}
 							>
-								Submit
+								Save Member
 							</Button>
 						</form>
 					</Flex>
 				</Container>
+				<Modal opened={opened} onClose={close} title="Delete Member?">
+					<Text>Are you sure you want to delete this member?</Text>
+					<Group grow className="mt-4">
+						<Button color="red" onClick={deleteMember}>
+							Delete
+						</Button>
+						<Button color="gray" onClick={close}>
+							Cancel
+						</Button>
+					</Group>
+				</Modal>
 			</Layout>
 		</>
 	);

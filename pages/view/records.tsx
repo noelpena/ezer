@@ -3,9 +3,10 @@ import Head from "next/head";
 import {
 	Button,
 	Flex,
+	Grid,
+	Group,
 	Pagination,
 	Select,
-	SimpleGrid,
 	Table,
 	Text,
 	Title,
@@ -28,7 +29,7 @@ import Layout from "@/components/Layout";
 import { Session } from "@supabase/supabase-js";
 import formatDate from "@/utils/formatDate";
 import { useRouter } from "next/router";
-import { IconRefresh } from "@tabler/icons-react";
+import { IconRefresh, IconUserPlus } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { showToast, updateToast } from "@/utils/notification";
 
@@ -214,20 +215,42 @@ export default function ViewRecords({
 			</Head>
 			<Layout session={session}>
 				<div className="h-screen max-w-screen-lg mt-6 mb-12 mx-4">
-					<SimpleGrid cols={2} className="mb-4">
-						<Title order={2}>Records List</Title>
-						<Button
-							className="border-1 !border-green-500"
-							variant="light"
-							color="green"
-							onClick={() => {
-								router.reload(); // make this better
-							}}
-							rightSection={<IconRefresh size={16} />}
-						>
-							Refresh List
-						</Button>
-					</SimpleGrid>
+					<Grid grow className="mb-4" justify="center">
+						<Grid.Col span={{ base: 12, sm: 4 }}>
+							<Title
+								order={2}
+								className="md:text-left text-center"
+							>
+								Records List
+							</Title>
+						</Grid.Col>
+
+						<Grid.Col span={{ base: 12, sm: 8 }}>
+							<Group className="!justify-center md:!justify-end">
+								<Button
+									rightSection={<IconUserPlus size={14} />}
+									variant="outline"
+									color="green"
+									onClick={() => {
+										router.push("/new/record");
+									}}
+								>
+									Add New Record
+								</Button>
+
+								<Button
+									variant="outline"
+									color="blue"
+									onClick={() => {
+										router.reload(); // make this better
+									}}
+									rightSection={<IconRefresh size={16} />}
+								>
+									Refresh List
+								</Button>
+							</Group>
+						</Grid.Col>
+					</Grid>
 
 					{record_data.length > 0 ? (
 						<>

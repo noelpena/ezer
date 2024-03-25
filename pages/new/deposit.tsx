@@ -5,8 +5,11 @@ import { zodResolver } from "mantine-form-zod-resolver";
 
 import { useForm } from "@mantine/form";
 import {
+	Anchor,
+	Breadcrumbs,
 	Button,
 	Flex,
+	Group,
 	NumberInput,
 	Select,
 	SimpleGrid,
@@ -34,6 +37,7 @@ import { useRouter } from "next/router";
 import supabaseDate from "@/utils/supabaseDate";
 import _ from "lodash";
 import { showToast, updateToast } from "@/utils/notification";
+import { IconArrowLeft } from "@tabler/icons-react";
 
 type NewDepositProps = {
 	session: Session;
@@ -147,6 +151,21 @@ export default function NewDeposit({ session, deposit_data }: NewDepositProps) {
 		setBtnIsDisabled(false);
 	};
 
+	const items: any = [
+		{ title: "Deposits", href: "/view/deposits" },
+		{ title: "New Deposit", href: "##" },
+	];
+
+	const breadCrumbItems = items.map((item: any, index: number) =>
+		index !== items.length - 1 ? (
+			<Anchor href={item.href} key={index}>
+				{item.title}
+			</Anchor>
+		) : (
+			<span key={index}>{item.title}</span>
+		)
+	);
+
 	return (
 		<>
 			<Head>
@@ -154,9 +173,13 @@ export default function NewDeposit({ session, deposit_data }: NewDepositProps) {
 			</Head>
 			<Layout session={session}>
 				<div className="h-screen max-w-screen-lg mt-6 mb-12 mx-4">
+					<Breadcrumbs separator=">" mt="xs" mb="xs">
+						{breadCrumbItems}
+					</Breadcrumbs>
 					{depositData.length > 0 && (
 						<>
 							<Title order={2}>Open Deposits</Title>
+
 							<Table striped withTableBorder>
 								<Table.Thead>
 									<Table.Tr>
@@ -185,7 +208,20 @@ export default function NewDeposit({ session, deposit_data }: NewDepositProps) {
 					)}
 
 					<Flex className="mt-8" direction="column">
-						<Title order={2}>Create New Deposit</Title>
+						<SimpleGrid cols={{ base: 1, xs: 2 }}>
+							<Title order={2}>Create New Deposit</Title>
+							<Group justify="flex-end">
+								<Button
+									size="xs"
+									color="gray"
+									leftSection={<IconArrowLeft size={18} />}
+									onClick={() => router.back()}
+								>
+									Go Back
+								</Button>
+							</Group>
+						</SimpleGrid>
+
 						<form
 							className="flex flex-col gap-y-6 mt-3"
 							id="form-add-record"
@@ -262,7 +298,7 @@ export default function NewDeposit({ session, deposit_data }: NewDepositProps) {
 								type="submit"
 								loading={btnIsDisabled}
 							>
-								Submit
+								Create New Deposit
 							</Button>
 						</form>
 					</Flex>
