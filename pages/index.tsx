@@ -93,8 +93,6 @@ const Home = ({ session, auth_view, _email }: AppProps) => {
 												"Sending login link...",
 										},
 										verify_otp: {
-											email_input_placeholder:
-												email || "Enter your email",
 											token_input_label: "Login code",
 											token_input_placeholder:
 												"Your login code",
