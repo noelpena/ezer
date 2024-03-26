@@ -28,7 +28,6 @@ import type { Deposit, Supabase_Response } from "@/types/models";
 import { DateInput } from "@mantine/dates";
 import capitalize from "@/utils/capitalize";
 import addCommasToAmount from "@/utils/addCommasToAmount";
-import googleDate from "@/utils/googleDate";
 import Layout from "@/components/Layout";
 
 import { Session } from "@supabase/supabase-js";

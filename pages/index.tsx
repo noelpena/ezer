@@ -75,7 +75,6 @@ const Home = ({ session, auth_view }: AppProps) => {
 								providers={[]}
 								showLinks={false}
 								view={authView}
-								redirectTo="/api/auth/callback"
 								localization={{
 									variables: {
 										magic_link: {

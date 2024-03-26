@@ -7,16 +7,10 @@ import {
 	Title,
 	Button,
 	Drawer,
-	Flex,
 	NavLink,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import {
-	IconChevronDown,
-	IconLogout,
-	IconLogout2,
-	IconSwitchHorizontal,
-} from "@tabler/icons-react";
+import { IconChevronDown, IconLogout, IconLogout2 } from "@tabler/icons-react";
 import Image from "next/image";
 import classes from "@/styles/HeaderMenu.module.css";
 import { MouseEventHandler } from "react";
@@ -25,13 +19,11 @@ import { useRouter } from "next/router";
 import { LinksGroup } from "./NavbarLinksGroup";
 
 import {
-	IconNotes,
 	IconArticle,
 	IconClipboardData,
 	IconFilePlus,
 } from "@tabler/icons-react";
 const links = [
-	// { link: "/view/records", label: "View Records" },
 	{
 		label: "View",
 		icon: IconArticle,
@@ -48,25 +40,19 @@ const links = [
 			{ link: "/new/record", label: "Record" },
 			{ link: "/new/deposit", label: "Deposit" },
 			{ link: "/new/member", label: "Member" },
-			// { link: "/resources", label: "Department" },
-			// { link: "/blog", label: "Balance" },
 		],
 	},
 	{
 		label: "Reports",
 		icon: IconFilePlus,
 		links: [
-			{ link: "/reports/diezmo", label: "Diezmo Report" },
+			{ link: "/admin/reports/diezmo", label: "Diezmo Report" },
 			{
-				link: "/reports/department",
-				label: "Departamento Income/Expense",
+				link: "/admin/reports/department",
+				label: "Departamento & Sociedad Report",
 			},
-			{ link: "/reports/sociedad", label: "Sociedad Income/Expense" },
-			// { link: "/resources", label: "Department" },
-			// { link: "/blog", label: "Balance" },
 		],
 	},
-	// { link: "/about", label: "Reports", icon: IconClipboardData },
 	{ link: "/admin", label: "Admin", icon: IconClipboardData },
 ];
 
@@ -77,7 +63,6 @@ type AppProps = {
 
 const HeaderMenu = ({ isLoggedIn, handleSignOut }: AppProps) => {
 	const [opened, { toggle }] = useDisclosure(false);
-	// const [opened, { open, close }] = useDisclosure(false);
 	const router = useRouter();
 
 	const items = links.map((link) => {

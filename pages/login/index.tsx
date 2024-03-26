@@ -12,6 +12,18 @@ import {
 } from "@supabase/auth-ui-shared";
 import { Session } from "@supabase/gotrue-js/src/lib/types";
 import { useState } from "react";
+import {
+	Anchor,
+	Text,
+	Button,
+	Checkbox,
+	Container,
+	Group,
+	Paper,
+	PasswordInput,
+	TextInput,
+	Title,
+} from "@mantine/core";
 
 type AppProps = {
 	session: Session | null;
@@ -63,83 +75,41 @@ const Login = ({ session }: AppProps) => {
 	};
 
 	return (
-		<>
-			<Auth
-				supabaseClient={supabase}
-				appearance={{ theme: ThemeSupa }}
-				theme="dark"
-				providers={[]}
-				showLinks={false}
-			/>
-			{/* <button onClick={signIn}>SIGN IN</button>
-			<br></br>
-			<button onClick={signOut}>SIGNOUT</button>
-			<br /> */}
-			<br />
-			{sesh !== null ? "I'm logged in" : "Not logged in"}
-		</>
+		<Container size={420} my={40}>
+			<Title
+				ta="center"
+				style={{
+					fontFamily: "Greycliff CF, sans-serif",
+					fontWeight: 900,
+				}}
+			>
+				Welcome back!
+			</Title>
+
+			<Paper withBorder shadow="md" p={30} mt={15} radius="md">
+				<TextInput
+					label="Email address"
+					placeholder="you@mantine.dev"
+					required
+				/>
+				<PasswordInput
+					label="Password"
+					placeholder="Your password"
+					required
+					mt="md"
+				/>
+				<Group justify="space-between" mt="lg">
+					{/* <Checkbox label="Remember me" /> */}
+					{/* <Anchor component="button" size="sm">
+						Forgot password?
+					</Anchor> */}
+				</Group>
+				<Button fullWidth mt="sm">
+					Sign in
+				</Button>
+			</Paper>
+		</Container>
 	);
-
-	// return (
-	// 	<div className="flex-1 flex flex-col w-full px-8 sm:max-w-md justify-center gap-2 h-screen">
-	// 		<button onClick={signIn}>SIGN IN</button>
-	// 		<button onClick={signOut}>SIGNOUT</button>
-	// 		<Link
-	// 			href="/"
-	// 			className="absolute left-8 top-8 py-2 px-4 rounded-md no-underline text-foreground bg-btn-background hover:bg-btn-background-hover flex items-center group text-sm"
-	// 		>
-	// 			<svg
-	// 				xmlns="http://www.w3.org/2000/svg"
-	// 				width="24"
-	// 				height="24"
-	// 				viewBox="0 0 24 24"
-	// 				fill="none"
-	// 				stroke="currentColor"
-	// 				strokeWidth="2"
-	// 				strokeLinecap="round"
-	// 				strokeLinejoin="round"
-	// 				className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1"
-	// 			>
-	// 				<polyline points="15 18 9 12 15 6" />
-	// 			</svg>{" "}
-	// 			Back
-	// 		</Link>
-
-	// 		<form
-	// 			className="animate-in flex-1 flex flex-col w-full justify-center gap-2 text-foreground"
-	// 			onSubmit={signIn}
-	// 		>
-	// 			<label className="text-md" htmlFor="email">
-	// 				Email
-	// 			</label>
-	// 			<input
-	// 				className="rounded-md px-4 py-2 bg-inherit border mb-6"
-	// 				name="email"
-	// 				placeholder="you@example.com"
-	// 				required
-	// 			/>
-	// 			<label className="text-md" htmlFor="password">
-	// 				Password
-	// 			</label>
-	// 			<input
-	// 				className="rounded-md px-4 py-2 bg-inherit border mb-6"
-	// 				type="password"
-	// 				name="password"
-	// 				placeholder="••••••••"
-	// 				required
-	// 			/>
-	// 			<button className="bg-green-700 rounded-md px-4 py-2 text-foreground mb-2">
-	// 				Sign In
-	// 			</button>
-	// 			<button
-	// 				onClick={signUp}
-	// 				className="border border-foreground/20 rounded-md px-4 py-2 text-foreground mb-2"
-	// 			>
-	// 				Sign Up
-	// 			</button>
-	// 		</form>
-	// 	</div>
-	// );
 };
 
 export default Login;

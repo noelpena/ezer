@@ -451,6 +451,31 @@ export type Database = {
       }
     }
     Functions: {
+      get_dept_records: {
+        Args: {
+          dept_id: number
+        }
+        Returns: {
+          id: string
+          created_at: string
+          last_modified: string
+          amount: number
+          member_id: string
+          date: string
+          department_id: number
+          category_id: number
+          income_expense: Database["public"]["Enums"]["IncomeExpense"]
+          payment_type: Database["public"]["Enums"]["PaymentType"]
+          description_notes: string
+          status: Database["public"]["Enums"]["Status"]
+          deposit_date: string
+          deposit_id: string
+          department_name: string
+          member_name: string
+          category_name: string
+          deposit_amount: number
+        }[]
+      }
       get_member_diezmos: {
         Args: {
           member_id: string
@@ -472,9 +497,25 @@ export type Database = {
           status: Database["public"]["Enums"]["Status"] | null
         }[]
       }
+      get_stats_amount: {
+        Args: {
+          member_id: string
+        }
+        Returns: {
+          max_amount: number
+          min_amount: number
+          avg_amount: number
+        }[]
+      }
       get_user_role: {
         Args: Record<PropertyKey, never>
         Returns: string
+      }
+      update_member_stats: {
+        Args: {
+          member_id: string
+        }
+        Returns: undefined
       }
     }
     Enums: {

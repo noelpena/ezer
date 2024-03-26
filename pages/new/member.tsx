@@ -29,7 +29,7 @@ import { Session } from "@supabase/supabase-js";
 import { useRouter } from "next/router";
 import _ from "lodash";
 import { showToast, updateToast } from "@/utils/notification";
-import { IconArrowLeft, IconTrash } from "@tabler/icons-react";
+import { IconArrowLeft } from "@tabler/icons-react";
 
 type NewMemberProps = {
 	deposit_data: Member[];

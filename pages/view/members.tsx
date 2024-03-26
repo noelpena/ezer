@@ -14,7 +14,7 @@ import Layout from "@/components/Layout";
 
 import { Session } from "@supabase/supabase-js";
 import { useRouter } from "next/router";
-import { IconPlus, IconUserPlus } from "@tabler/icons-react";
+import { IconUserPlus } from "@tabler/icons-react";
 
 type ViewMemberProps = {
 	session: Session;

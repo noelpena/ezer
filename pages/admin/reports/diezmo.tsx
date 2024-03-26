@@ -24,8 +24,10 @@ type AppProps = {
 
 export default function Diezmo({ session, member_data }: AppProps) {
 	const [selectMember, setSelectedMember] = useState<string>("");
-	const [diezmos, setDiezmos] = useState<Record[]>([]);
+	const [diezmos, setDiezmos] = useState<Record[] | null>(null);
 	const [total, setTotal] = useState<number>(0);
+	const [max, setMax] = useState<number>(0);
+	const [min, setMin] = useState<number>(0);
 	const supabase = createSupabaseFrontendClient();
 
 	function member_names(member_data: Member[]) {
@@ -55,12 +57,18 @@ export default function Diezmo({ session, member_data }: AppProps) {
 		if (data) {
 			setDiezmos(data);
 			let diezmoTotal = 0;
-			data.map((record) => {
+			let minAmount = Number.POSITIVE_INFINITY;
+			let maxAmount = Number.NEGATIVE_INFINITY;
+			data.forEach((record) => {
 				if (record.amount) {
 					diezmoTotal += record.amount;
+					minAmount = Math.min(minAmount, record.amount);
+					maxAmount = Math.max(maxAmount, record.amount);
 				}
 			});
 			setTotal(diezmoTotal / 100);
+			setMin(minAmount / 100);
+			setMax(maxAmount / 100);
 		}
 	};
 
@@ -70,23 +78,24 @@ export default function Diezmo({ session, member_data }: AppProps) {
 		}
 	};
 
-	const rows = diezmos.map((record) => {
-		if (record.amount && record.id) {
-			// setTotal((prevTotal) => {
-			// 	return prevTotal + record.amount;
-			// });
-			return (
-				<Table.Tr key={record.id}>
-					<Table.Td>{`$${addCommasToAmount(
-						(record.amount / 100).toFixed(2)
-					)}`}</Table.Td>
+	const rows = diezmos
+		? diezmos.map((record) => {
+				if (record.amount && record.id) {
+					return (
+						<Table.Tr key={record.id}>
+							<Table.Td>{`$${addCommasToAmount(
+								(record.amount / 100).toFixed(2)
+							)}`}</Table.Td>
 
-					<Table.Td>{formatDate(record.date || "")}</Table.Td>
-					<Table.Td>{capitalize(record.payment_type || "")}</Table.Td>
-				</Table.Tr>
-			);
-		}
-	});
+							<Table.Td>{formatDate(record.date || "")}</Table.Td>
+							<Table.Td>
+								{capitalize(record.payment_type || "")}
+							</Table.Td>
+						</Table.Tr>
+					);
+				}
+		  })
+		: [];
 
 	return (
 		<>
@@ -103,7 +112,8 @@ export default function Diezmo({ session, member_data }: AppProps) {
 						placeholder="Search or scroll down the list to select a member"
 						searchable
 					></Select>
-					{diezmos.length > 0 ? (
+
+					{diezmos !== null && diezmos.length > 0 && (
 						<>
 							<Table striped withTableBorder className="mt-4">
 								<Table.Thead>
@@ -117,9 +127,19 @@ export default function Diezmo({ session, member_data }: AppProps) {
 							</Table>
 							<div className="bg-gray-200 p-3">
 								Total: ${addCommasToAmount(total.toFixed(2))}
+								<br />
+								Max: ${addCommasToAmount(max.toFixed(2))}
+								<br />
+								Min: ${addCommasToAmount(min.toFixed(2))}
+								<br />
+								Average: $
+								{addCommasToAmount(
+									(total / diezmos.length).toFixed(2)
+								)}
 							</div>
 						</>
-					) : (
+					)}
+					{diezmos !== null && diezmos.length === 0 && (
 						<p className="mt-4">
 							No diezmos found for the selected member.
 						</p>

@@ -20,7 +20,7 @@ import "@mantine/core/styles.layer.css";
 import "@mantine/dates/styles.layer.css";
 
 import type { GetServerSidePropsContext } from "next/types";
-import type { Record, RecordsView, Supabase_Response } from "@/types/models";
+import type { RecordsView, Supabase_Response } from "@/types/models";
 
 import capitalize from "@/utils/capitalize";
 import addCommasToAmount from "@/utils/addCommasToAmount";
