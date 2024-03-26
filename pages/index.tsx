@@ -2,8 +2,8 @@ import { Inter } from "next/font/google";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { Auth, MagicLink } from "@supabase/auth-ui-react";
-import { ThemeSupa, ViewType } from "@supabase/auth-ui-shared";
+import { Auth, MagicLink, VerifyOtp } from "@supabase/auth-ui-react";
+import { ThemeSupa, ThemeMinimal, ViewType } from "@supabase/auth-ui-shared";
 
 import {
 	createSupabaseFrontendClient,
@@ -19,22 +19,13 @@ const inter = Inter({ subsets: ["latin"] });
 type AppProps = {
 	session: Session | null;
 	auth_view: ViewType;
-	_email: string;
 };
 
-const Home = ({ session, auth_view, _email }: AppProps) => {
+const Home = ({ session, auth_view }: AppProps) => {
 	const router = useRouter();
 	const [sesh, setSesh] = useState(session);
 	const [authView, setAuthView] = useState<ViewType>(auth_view);
-	const [email, setEmail] = useState<string>(_email);
 	const supabase = createSupabaseFrontendClient();
-
-	useEffect(() => {
-		const emailField = document.getElementById("email") as HTMLInputElement;
-		if (email !== "") {
-			emailField.value = email;
-		}
-	}, []);
 
 	useEffect(() => {
 		const { data } = supabase.auth.onAuthStateChange(
@@ -75,6 +66,7 @@ const Home = ({ session, auth_view, _email }: AppProps) => {
 					>
 						<Container>
 							<Title order={1}>Ezer Login</Title>
+
 							<Auth
 								supabaseClient={supabase}
 								appearance={{ theme: ThemeSupa }}
@@ -83,7 +75,7 @@ const Home = ({ session, auth_view, _email }: AppProps) => {
 								providers={[]}
 								showLinks={false}
 								view={authView}
-								// view={"verify_otp"}
+								redirectTo="/api/auth/callback"
 								localization={{
 									variables: {
 										magic_link: {
@@ -93,6 +85,7 @@ const Home = ({ session, auth_view, _email }: AppProps) => {
 												"Sending login link...",
 										},
 										verify_otp: {
+											button_label: " Verify login code",
 											token_input_label: "Login code",
 											token_input_placeholder:
 												"Your login code",
@@ -162,16 +155,12 @@ export default Home;
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
 	const supabase = createSupabaseReqResClient(ctx);
 	const auth_view = ctx.query.view || "sign_in";
-	let _email = ctx.query.email || "";
-	if (_email) {
-		_email = decodeURIComponent(_email as string);
-	}
 
 	const {
 		data: { session },
 	} = await supabase.auth.getSession();
 
 	return {
-		props: { session, auth_view, _email },
+		props: { session, auth_view },
 	};
 };
