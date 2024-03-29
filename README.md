@@ -1,18 +1,18 @@
 -   [x] Add loading to form until after submission completes. Possibly disable fields
--   [ ] Add loading mantine notification on forms
+-   [x] Add loading mantine notification on forms
 -   [ ] Add error mantine notification on forms
 -   [ ] Add greeting and name to header menu
 -   [x] Add mobile menu (drawer in Mantine)
--   [ ] RLS in supabase? Roles? - in progress
+-   [x] RLS in supabase? Roles? - in progress
 -   [ ] remote Doubleclick on form
 -   [x] /new/record and /new/deposit instead of /record/new
 -   [ ] Permissions
--   [ ] new dept form
+-   [x] new dept form
 -   [x] new member form
 -   [ ] is last modified being updated on edits?
 -   [ ] Preference of language
 -   [ ] View Records within a Deposit
--   [ ] Be able to delete deposits
+-   [x] Be able to delete deposits
 -   [x] Resend to send auth emails
 -   [ ] Add sum for open deposits on deposit list (view deposits would show deposit view. Add missing fields. Only for open deposits)
 -   [ ] Error after login..?

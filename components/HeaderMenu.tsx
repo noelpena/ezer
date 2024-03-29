@@ -67,8 +67,12 @@ const HeaderMenu = ({ isLoggedIn, handleSignOut }: AppProps) => {
 
 	const items = links.map((link) => {
 		const menuItems = link.links?.map((item) => (
-			<Menu.Item key={item.link}>
-				<Link href={item.link.toString()}>{item.label}</Link>
+			<Menu.Item
+				key={item.link}
+				component="a"
+				href={item.link.toString()}
+			>
+				{item.label}
 			</Menu.Item>
 		));
 
