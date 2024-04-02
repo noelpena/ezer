@@ -51,7 +51,9 @@ export default function NewDeposit({ session, deposit_data }: NewDepositProps) {
 	const rows = depositData.map((deposit) => (
 		<Table.Tr key={deposit.id}>
 			<Table.Td>{capitalize(deposit.deposit_type)}</Table.Td>
-			<Table.Td>{formatDate(deposit.deposit_date)}</Table.Td>
+			<Table.Td>
+				{formatDate(deposit.deposit_date.replace("-", "/"))}
+			</Table.Td>
 			<Table.Td>
 				${addCommasToAmount((deposit.amount / 100).toFixed(2))}
 			</Table.Td>

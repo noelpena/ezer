@@ -17,6 +17,8 @@ import { Session } from "@supabase/supabase-js";
 import formatDate from "@/utils/formatDate";
 import { useRouter } from "next/router";
 import { IconFilePlus } from "@tabler/icons-react";
+import supabaseDate from "@/utils/supabaseDate";
+import googleDate from "@/utils/googleDate";
 
 type ViewDepositProps = {
 	session: Session;
@@ -30,11 +32,12 @@ export default function ViewDeposit({
 	is_closed,
 }: ViewDepositProps) {
 	const router = useRouter();
-
 	const rows = deposit_data.map((deposit) => (
 		<Table.Tr key={deposit.id}>
 			<Table.Td>{capitalize(deposit.deposit_type)}</Table.Td>
-			<Table.Td>{formatDate(deposit.deposit_date)}</Table.Td>
+			<Table.Td>
+				{formatDate(deposit.deposit_date.replace("-", "/"))}
+			</Table.Td>
 			<Table.Td>
 				${addCommasToAmount((deposit.amount / 100).toFixed(2))}
 			</Table.Td>
