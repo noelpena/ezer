@@ -68,14 +68,15 @@ export default function EditDeposit({
 		validate: zodResolver(editDepositSchema),
 		initialValues: {
 			id: depositData.id,
-			deposit_date: new Date(formatDate(depositData.deposit_date)),
+			deposit_date: new Date(
+				formatDate(depositData.deposit_date.replace("-", "/"))
+			),
 			amount: depositData.amount / 100,
 			notes: depositData.notes,
 			deposit_type: depositData.deposit_type,
 			is_closed: depositData.is_closed.toString(),
 		},
 	});
-
 	const submitEditDeposit = async (values: any) => {
 		setBtnIsDisabled(true);
 		showToast(

@@ -158,7 +158,6 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
 	const {
 		data: { session },
 	} = await supabase.auth.getSession();
-
 	try {
 		const deposit_res: Supabase_Response<Deposit[]> = await supabase
 			.from("deposits")
