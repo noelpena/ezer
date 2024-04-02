@@ -131,7 +131,7 @@ const NewRecord = ({
 								(deposit.amount / 100).toFixed(2)
 							)) as string) +
 						" - " +
-						formatDate(deposit.deposit_date),
+						formatDate(deposit.deposit_date.replace("-", "/")),
 				};
 			}
 		);
