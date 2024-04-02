@@ -352,8 +352,8 @@ const NewRecord = ({
 				tesoreriaForm.setValues({
 					//@ts-ignore
 					deposit_date: new Date(
-						formatDate(deposit.deposit_date)
-					) as string,
+						formatDate(deposit.deposit_date.replace("-", "/"))
+					),
 					//@ts-ignore
 					deposit_id: deposit.id,
 				});
