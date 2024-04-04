@@ -1,18 +1,31 @@
+-   [ ] View Records within a Deposit
+-   [ ] Set Records within a Deposit as "deposited" from "recorded"
+-   [ ] Make it so cannot delete member if there is data or diezmos for them
+-   [ ] Add change password link/view = /?view=update_password (/?view=forgotten_password)
+-   [ ] Update forgot password email template
+-   [ ] Add year dropdown to reports 2024, 2023, etc...
+-   [ ] Add form to add or remove admins
+-   [ ] Add form to change user's "status" admin, user, editor etc...
+-   [ ] Add sum for open deposits on deposit list (view deposits would show deposit view. Add missing fields. Only for open deposits)
+-   [ ] is last modified being updated on edits?
+-   [ ] Add greeting and name to header menu
+-   [ ] Preference of language
+-   [ ] Dark mode please
+-   [ ] Add company/org table and comp_ref/org_id to all relevant tables
+-   [ ] Vendors for expenses? Quickbooks style? To view all expenses for a particular vendor
+-   [ ] "Positions" table? President of X dept., secretary of X society with foreign ID on member's table? If position is not null on member's table they can view reports for that dept/sociedad
+-   [ ] Permissions
+-   [ ] Error after login. Firefox error only seems like
+-   [ ] Custom Report and export data.
+-   [ ] CSV import. Yes but ew
+-   [x] remove Doubleclick on form
 -   [x] Add loading to form until after submission completes. Possibly disable fields
 -   [x] Add loading mantine notification on forms
--   [ ] Add error mantine notification on forms
--   [ ] Add greeting and name to header menu
+-   [x] Add error mantine notification on forms
 -   [x] Add mobile menu (drawer in Mantine)
 -   [x] RLS in supabase? Roles? - in progress
--   [ ] remote Doubleclick on form
 -   [x] /new/record and /new/deposit instead of /record/new
--   [ ] Permissions
 -   [x] new dept form
 -   [x] new member form
--   [ ] is last modified being updated on edits?
--   [ ] Preference of language
--   [ ] View Records within a Deposit
 -   [x] Be able to delete deposits
 -   [x] Resend to send auth emails
--   [ ] Add sum for open deposits on deposit list (view deposits would show deposit view. Add missing fields. Only for open deposits)
--   [ ] Error after login..?

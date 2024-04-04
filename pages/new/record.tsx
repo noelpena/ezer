@@ -165,6 +165,7 @@ const NewRecord = ({
 			})
 			.nullable()
 			.or(z.string().nullable()),
+		user_id: z.string().uuid(),
 		// .nullable()
 		// status: z.enum(["deposited", "recorded"]),
 	});
@@ -182,6 +183,7 @@ const NewRecord = ({
 			description_notes: "",
 			deposit_id: null,
 			deposit_date: null,
+			user_id: session.user.id,
 			// status: "recorded",
 		},
 	});
@@ -196,7 +198,7 @@ const NewRecord = ({
 			"blue",
 			true
 		);
-		console.log(values);
+		// console.log(values);
 		if (values.department_id === null && values.member_id === null) {
 			console.error("department or member is required");
 			updateToast(
@@ -272,7 +274,10 @@ const NewRecord = ({
 					: "cash";
 			const depositInfo = {
 				id: data[0].deposit_id,
-				date: formatDate(data[0].deposit_date),
+				date:
+					data[0].deposit_date !== null
+						? formatDate(data[0].deposit_date.replace("-", "/"))
+						: null,
 			};
 			updateToast(
 				"new-google-record",
@@ -288,7 +293,7 @@ const NewRecord = ({
 				payment_type: isVenmo,
 				deposit_id: depositInfo.id,
 				//@ts-ignore
-				deposit_date: new Date(formatDate(depositInfo.date)) as string,
+				deposit_date: depositInfo.date,
 			});
 			setShowMemberDropdown(false);
 			setShowDeptDropdown(true);
