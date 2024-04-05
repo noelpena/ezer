@@ -177,7 +177,7 @@ const HeaderMenu = ({ isLoggedIn, handleSignOut }: AppProps) => {
 							variant="filled"
 							color="gray"
 							onClick={handleSignOut}
-							label="Sign out"
+							label="Log Out"
 							className="bg-gray-500 hover:bg-gray-300"
 							leftSection={
 								<IconLogout stroke={1.5} size="1.25rem" />

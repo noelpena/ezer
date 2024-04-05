@@ -1,5 +1,9 @@
 import Layout from "@/components/Layout";
-import { Department, RecordsView, Supabase_Response } from "@/types/models";
+import type {
+	Department,
+	RecordsView,
+	Supabase_Response,
+} from "@/types/models";
 import addCommasToAmount from "@/utils/addCommasToAmount";
 import capitalize from "@/utils/capitalize";
 import formatDate from "@/utils/formatDate";
@@ -233,7 +237,10 @@ export default function Department({ session, dept_data }: AppProps) {
 									</Tabs.Tab>
 								</Tabs.List>
 								<Tabs.Panel value="income">
-									<Table.ScrollContainer minWidth={600}>
+									<Table.ScrollContainer
+										minWidth={600}
+										type="native"
+									>
 										<Table
 											striped
 											withTableBorder

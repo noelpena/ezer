@@ -254,7 +254,7 @@ export default function ViewRecords({
 
 					{record_data.length > 0 ? (
 						<>
-							<Table.ScrollContainer minWidth={800}>
+							<Table.ScrollContainer minWidth={800} type="native">
 								<Table striped withTableBorder>
 									<Table.Thead>
 										<Table.Tr>
