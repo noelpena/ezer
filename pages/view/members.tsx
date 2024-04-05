@@ -1,6 +1,6 @@
 import Head from "next/head";
 
-import { Button, Group, SimpleGrid, Table, Title } from "@mantine/core";
+import { Button, Grid, Group, SimpleGrid, Table, Title } from "@mantine/core";
 import { createSupabaseReqResClient } from "@/utils/supabase";
 
 import "@mantine/core/styles.layer.css";
@@ -61,58 +61,75 @@ export default function ViewMember({
 			</Head>
 			<Layout session={session}>
 				<div className="h-screen max-w-screen-lg mt-6 mb-12 mx-4">
-					<SimpleGrid cols={2} className="mb-4">
-						<Title order={2}>
-							{is_active ? "Active" : "Inactive"} Members
-						</Title>
-						{is_active ? (
-							<Group justify="flex-end">
-								<Button
-									rightSection={<IconUserPlus size={14} />}
-									variant="outline"
-									color="green"
-									onClick={() => {
-										router.push("/new/member");
-									}}
+					<Grid grow className="mb-4" justify="center">
+						<Grid.Col span={{ base: 12, sm: 4 }}>
+							<Title
+								order={2}
+								className="md:text-left text-center"
+							>
+								{is_active ? "Active" : "Inactive"} Members
+							</Title>
+						</Grid.Col>
+						<Grid.Col span={{ base: 12, sm: 8 }}>
+							{is_active ? (
+								<Group
+									justify="flex-end"
+									className="!justify-center md:!justify-end"
 								>
-									Add New Member
-								</Button>
-								<Button
-									variant="outline"
-									color="yellow"
-									onClick={() => {
-										router.push(
-											"/view/members?is_active=false"
-										);
-									}}
+									<Button
+										rightSection={
+											<IconUserPlus size={14} />
+										}
+										variant="outline"
+										color="green"
+										onClick={() => {
+											router.push("/new/member");
+										}}
+									>
+										Add New Member
+									</Button>
+									<Button
+										variant="outline"
+										color="yellow"
+										onClick={() => {
+											router.push(
+												"/view/members?is_active=false"
+											);
+										}}
+									>
+										View Inactive Members
+									</Button>
+								</Group>
+							) : (
+								<Group
+									justify="flex-end"
+									className="!justify-center md:!justify-end"
 								>
-									View Inactive Members
-								</Button>
-							</Group>
-						) : (
-							<Group justify="flex-end">
-								<Button
-									rightSection={<IconUserPlus size={14} />}
-									variant="outline"
-									color="green"
-									onClick={() => {
-										router.push("/new/member");
-									}}
-								>
-									Add New Member
-								</Button>
-								<Button
-									variant="outline"
-									color="blue"
-									onClick={() => {
-										router.push("/view/members");
-									}}
-								>
-									View Active Members
-								</Button>
-							</Group>
-						)}
-					</SimpleGrid>
+									<Button
+										rightSection={
+											<IconUserPlus size={14} />
+										}
+										variant="outline"
+										color="green"
+										onClick={() => {
+											router.push("/new/member");
+										}}
+									>
+										Add New Member
+									</Button>
+									<Button
+										variant="outline"
+										color="blue"
+										onClick={() => {
+											router.push("/view/members");
+										}}
+									>
+										View Active Members
+									</Button>
+								</Group>
+							)}
+						</Grid.Col>
+					</Grid>
 					{member_data.length > 0 ? (
 						<>
 							<Table striped withTableBorder>

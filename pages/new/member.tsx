@@ -111,9 +111,12 @@ export default function NewMember({ session, deposit_data }: NewMemberProps) {
 						{breadCrumbItems}
 					</Breadcrumbs>
 					<Flex className="mt-8" direction="column">
-						<SimpleGrid cols={{ base: 1, xs: 2 }}>
+						<SimpleGrid cols={{ base: 1, sm: 2 }}>
 							<Title order={2}>Add New Member</Title>
-							<Group justify="flex-end">
+							<Group
+								justify="flex-end"
+								className="!justify-start md:!justify-end"
+							>
 								<Button
 									size="xs"
 									color="gray"

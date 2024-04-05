@@ -1,6 +1,6 @@
 import Head from "next/head";
 
-import { Button, SimpleGrid, Table, Title, Group } from "@mantine/core";
+import { Button, Table, Title, Group, Grid } from "@mantine/core";
 import { createSupabaseReqResClient } from "@/utils/supabase";
 
 import "@mantine/core/styles.layer.css";
@@ -17,9 +17,6 @@ import { Session } from "@supabase/supabase-js";
 import formatDate from "@/utils/formatDate";
 import { useRouter } from "next/router";
 import { IconFilePlus } from "@tabler/icons-react";
-import supabaseDate from "@/utils/supabaseDate";
-import googleDate from "@/utils/googleDate";
-
 type ViewDepositProps = {
 	session: Session;
 	deposit_data: Deposit[];
@@ -65,74 +62,93 @@ export default function ViewDeposit({
 			</Head>
 			<Layout session={session}>
 				<div className="h-screen max-w-screen-lg mt-6 mb-12 mx-4">
-					<SimpleGrid cols={2} className="mb-4">
-						<Title order={2}>
-							{is_closed ? "Closed" : "Open"} Deposits
-						</Title>
-						{is_closed ? (
-							<Group justify="flex-end">
-								<Button
-									rightSection={<IconFilePlus size={14} />}
-									variant="outline"
-									color="green"
-									onClick={() => {
-										router.push("/new/deposit");
-									}}
+					<Grid grow className="mb-4" justify="center">
+						<Grid.Col span={{ base: 12, sm: 4 }}>
+							<Title
+								order={2}
+								className="md:text-left text-center"
+							>
+								{is_closed ? "Closed" : "Open"} Deposits
+							</Title>
+						</Grid.Col>
+						<Grid.Col span={{ base: 12, sm: 8 }}>
+							{is_closed ? (
+								<Group
+									justify="flex-end"
+									className="!justify-center md:!justify-end"
 								>
-									Add New Deposit
-								</Button>
+									<Button
+										rightSection={
+											<IconFilePlus size={14} />
+										}
+										variant="outline"
+										color="green"
+										onClick={() => {
+											router.push("/new/deposit");
+										}}
+									>
+										Add New Deposit
+									</Button>
 
-								<Button
-									variant="outline"
-									color="blue"
-									onClick={() => {
-										router.push("/view/deposits");
-									}}
+									<Button
+										variant="outline"
+										color="blue"
+										onClick={() => {
+											router.push("/view/deposits");
+										}}
+									>
+										View Open Deposits
+									</Button>
+								</Group>
+							) : (
+								<Group
+									justify="flex-end"
+									className="!justify-center md:!justify-end"
 								>
-									View Open Deposits
-								</Button>
-							</Group>
-						) : (
-							<Group justify="flex-end">
-								<Button
-									rightSection={<IconFilePlus size={14} />}
-									variant="outline"
-									color="green"
-									onClick={() => {
-										router.push("/new/deposit");
-									}}
-								>
-									Add New Deposit
-								</Button>
-								<Button
-									variant="outline"
-									color="yellow"
-									onClick={() => {
-										router.push(
-											"/view/deposits?is_closed=true"
-										);
-									}}
-								>
-									View Closed Deposits
-								</Button>
-							</Group>
-						)}
-					</SimpleGrid>
+									<Button
+										rightSection={
+											<IconFilePlus size={14} />
+										}
+										variant="outline"
+										color="green"
+										onClick={() => {
+											router.push("/new/deposit");
+										}}
+									>
+										Add New Deposit
+									</Button>
+									<Button
+										variant="outline"
+										color="yellow"
+										onClick={() => {
+											router.push(
+												"/view/deposits?is_closed=true"
+											);
+										}}
+									>
+										View Closed Deposits
+									</Button>
+								</Group>
+							)}
+						</Grid.Col>
+					</Grid>
 					{deposit_data.length > 0 ? (
 						<>
-							<Table striped withTableBorder>
-								<Table.Thead>
-									<Table.Tr>
-										<Table.Th>Deposit Type</Table.Th>
-										<Table.Th>Date</Table.Th>
-										<Table.Th>Amount</Table.Th>
-										<Table.Th>Notes</Table.Th>
-										<Table.Th>Closed?</Table.Th>
-										<Table.Th>Actions</Table.Th>
-									</Table.Tr>
-								</Table.Thead>
-								<Table.Tbody>{rows}</Table.Tbody>
-							</Table>
+							<Table.ScrollContainer minWidth={500}>
+								<Table striped withTableBorder>
+									<Table.Thead>
+										<Table.Tr>
+											<Table.Th>Deposit Type</Table.Th>
+											<Table.Th>Date</Table.Th>
+											<Table.Th>Amount</Table.Th>
+											<Table.Th>Notes</Table.Th>
+											<Table.Th>Closed?</Table.Th>
+											<Table.Th>Actions</Table.Th>
+										</Table.Tr>
+									</Table.Thead>
+									<Table.Tbody>{rows}</Table.Tbody>
+								</Table>
+							</Table.ScrollContainer>
 						</>
 					) : (
 						<>

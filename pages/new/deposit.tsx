@@ -25,7 +25,7 @@ import "@mantine/dates/styles.layer.css";
 import type { GetServerSidePropsContext } from "next/types";
 import type { Deposit, Supabase_Response } from "@/types/models";
 
-import { DateInput } from "@mantine/dates";
+import { DatePickerInput } from "@mantine/dates";
 import capitalize from "@/utils/capitalize";
 import addCommasToAmount from "@/utils/addCommasToAmount";
 import Layout from "@/components/Layout";
@@ -180,19 +180,20 @@ export default function NewDeposit({ session, deposit_data }: NewDepositProps) {
 					{depositData.length > 0 && (
 						<>
 							<Title order={2}>Open Deposits</Title>
-
-							<Table striped withTableBorder>
-								<Table.Thead>
-									<Table.Tr>
-										<Table.Th>Deposit Type</Table.Th>
-										<Table.Th>Date</Table.Th>
-										<Table.Th>Amount</Table.Th>
-										<Table.Th>Notes</Table.Th>
-										<Table.Th>Actions</Table.Th>
-									</Table.Tr>
-								</Table.Thead>
-								<Table.Tbody>{rows}</Table.Tbody>
-							</Table>
+							<Table.ScrollContainer minWidth={500}>
+								<Table striped withTableBorder>
+									<Table.Thead>
+										<Table.Tr>
+											<Table.Th>Deposit Type</Table.Th>
+											<Table.Th>Date</Table.Th>
+											<Table.Th>Amount</Table.Th>
+											<Table.Th>Notes</Table.Th>
+											<Table.Th>Actions</Table.Th>
+										</Table.Tr>
+									</Table.Thead>
+									<Table.Tbody>{rows}</Table.Tbody>
+								</Table>
+							</Table.ScrollContainer>
 							<br />
 							<Button
 								variant="outline"
@@ -209,9 +210,12 @@ export default function NewDeposit({ session, deposit_data }: NewDepositProps) {
 					)}
 
 					<Flex className="mt-8" direction="column">
-						<SimpleGrid cols={{ base: 1, xs: 2 }}>
+						<SimpleGrid cols={{ base: 1, sm: 2 }}>
 							<Title order={2}>Create New Deposit</Title>
-							<Group justify="flex-end">
+							<Group
+								justify="flex-end"
+								className="!justify-start md:!justify-end"
+							>
 								<Button
 									size="xs"
 									color="gray"
@@ -230,7 +234,7 @@ export default function NewDeposit({ session, deposit_data }: NewDepositProps) {
 								submitNewDeposit(values)
 							)}
 						>
-							<DateInput
+							<DatePickerInput
 								valueFormat="MM/DD/YYYY"
 								label="Deposit Date"
 								placeholder="Date"

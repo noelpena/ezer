@@ -110,21 +110,23 @@ export default function Diezmo({ session, member_data }: AppProps) {
 						data={member_names(member_data)}
 						onChange={handleMemberChange}
 						placeholder="Search or scroll down the list to select a member"
-						searchable
+						searchable={true} //hide on mobile?
 					></Select>
 
 					{diezmos !== null && diezmos.length > 0 && (
 						<>
-							<Table striped withTableBorder className="mt-4">
-								<Table.Thead>
-									<Table.Tr>
-										<Table.Th>Amount</Table.Th>
-										<Table.Th>Date</Table.Th>
-										<Table.Th>Payment Type</Table.Th>
-									</Table.Tr>
-								</Table.Thead>
-								<Table.Tbody>{rows}</Table.Tbody>
-							</Table>
+							<Table.ScrollContainer minWidth={600}>
+								<Table striped withTableBorder className="mt-4">
+									<Table.Thead>
+										<Table.Tr>
+											<Table.Th>Amount</Table.Th>
+											<Table.Th>Date</Table.Th>
+											<Table.Th>Payment Type</Table.Th>
+										</Table.Tr>
+									</Table.Thead>
+									<Table.Tbody>{rows}</Table.Tbody>
+								</Table>
+							</Table.ScrollContainer>
 							<div className="bg-gray-200 p-3">
 								Total: ${addCommasToAmount(total.toFixed(2))}
 								<br />

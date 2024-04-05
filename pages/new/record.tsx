@@ -22,10 +22,9 @@ import type {
 	Department,
 	Deposit,
 	Member,
-	Record,
 	Supabase_Response,
 } from "@/types/models";
-import { DateInput } from "@mantine/dates";
+import { DatePickerInput } from "@mantine/dates";
 import capitalize from "@/utils/capitalize";
 import googleDate from "@/utils/googleDate";
 import Layout from "@/components/Layout";
@@ -276,7 +275,7 @@ const NewRecord = ({
 				id: data[0].deposit_id,
 				date:
 					data[0].deposit_date !== null
-						? formatDate(data[0].deposit_date.replace("-", "/"))
+						? formatDate(data[0].deposit_date)
 						: null,
 			};
 			updateToast(
@@ -293,7 +292,7 @@ const NewRecord = ({
 				payment_type: isVenmo,
 				deposit_id: depositInfo.id,
 				//@ts-ignore
-				deposit_date: depositInfo.date,
+				deposit_date: new Date(depositInfo.date),
 			});
 			setShowMemberDropdown(false);
 			setShowDeptDropdown(true);
@@ -517,7 +516,7 @@ const NewRecord = ({
 							)}
 						/>
 
-						<DateInput
+						<DatePickerInput
 							valueFormat="MM/DD/YYYY"
 							// defaultvalue={new Date()}
 							label="Date"
@@ -537,7 +536,7 @@ const NewRecord = ({
 								{...tesoreriaForm.getInputProps("deposit_id")}
 								onChange={handleDepositDate}
 							/>
-							<DateInput
+							<DatePickerInput
 								disabled={true}
 								valueFormat="MM/DD/YYYY"
 								label="Deposit Date"

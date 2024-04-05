@@ -254,22 +254,24 @@ export default function ViewRecords({
 
 					{record_data.length > 0 ? (
 						<>
-							<Table striped withTableBorder>
-								<Table.Thead>
-									<Table.Tr>
-										<Table.Th>Category</Table.Th>
-										<Table.Th>Member</Table.Th>
-										<Table.Th>Department</Table.Th>
-										<Table.Th>Amount</Table.Th>
-										<Table.Th>Income/Expense</Table.Th>
-										<Table.Th>Payment Type</Table.Th>
-										<Table.Th>Date</Table.Th>
-										<Table.Th>Notes</Table.Th>
-										<Table.Th>Actions</Table.Th>
-									</Table.Tr>
-								</Table.Thead>
-								<Table.Tbody>{rows}</Table.Tbody>
-							</Table>
+							<Table.ScrollContainer minWidth={800}>
+								<Table striped withTableBorder>
+									<Table.Thead>
+										<Table.Tr>
+											<Table.Th>Category</Table.Th>
+											<Table.Th>Member</Table.Th>
+											<Table.Th>Department</Table.Th>
+											<Table.Th>Amount</Table.Th>
+											<Table.Th>Income/Expense</Table.Th>
+											<Table.Th>Payment Type</Table.Th>
+											<Table.Th>Date</Table.Th>
+											<Table.Th>Notes</Table.Th>
+											<Table.Th>Actions</Table.Th>
+										</Table.Tr>
+									</Table.Thead>
+									<Table.Tbody>{rows}</Table.Tbody>
+								</Table>
+							</Table.ScrollContainer>
 							<Flex
 								justify="space-between"
 								className="mb-4 flex items-center bg-neutral-200 p-4"
