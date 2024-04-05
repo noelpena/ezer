@@ -233,57 +233,67 @@ export default function Department({ session, dept_data }: AppProps) {
 									</Tabs.Tab>
 								</Tabs.List>
 								<Tabs.Panel value="income">
-									<Table
-										striped
-										withTableBorder
-										className="mt-4"
-									>
-										<Table.Thead>
-											<Table.Tr>
-												<Table.Th>Category</Table.Th>
-												<Table.Th>Amount</Table.Th>
-												<Table.Th>Notes</Table.Th>
-												<Table.Th>Date</Table.Th>
-												<Table.Th>
-													Payment Type
-												</Table.Th>
-											</Table.Tr>
-										</Table.Thead>
-										<Table.Tbody>{incomeRows}</Table.Tbody>
-									</Table>
+									<Table.ScrollContainer minWidth={600}>
+										<Table
+											striped
+											withTableBorder
+											className="mt-4"
+										>
+											<Table.Thead>
+												<Table.Tr>
+													<Table.Th>
+														Category
+													</Table.Th>
+													<Table.Th>Amount</Table.Th>
+													<Table.Th>Notes</Table.Th>
+													<Table.Th>Date</Table.Th>
+													<Table.Th>
+														Payment Type
+													</Table.Th>
+												</Table.Tr>
+											</Table.Thead>
+											<Table.Tbody>
+												{incomeRows}
+											</Table.Tbody>
+										</Table>
+									</Table.ScrollContainer>
 								</Tabs.Panel>
 
 								<Tabs.Panel value="expenses">
 									{records !== null && records.length > 0 && (
 										<>
-											<Table
-												striped
-												withTableBorder
-												className="mt-4"
+											<Table.ScrollContainer
+												minWidth={600}
 											>
-												<Table.Thead>
-													<Table.Tr>
-														<Table.Th>
-															Category
-														</Table.Th>
-														<Table.Th>
-															Amount
-														</Table.Th>
-														<Table.Th>
-															Notes
-														</Table.Th>
-														<Table.Th>
-															Date
-														</Table.Th>
-														<Table.Th>
-															Payment Type
-														</Table.Th>
-													</Table.Tr>
-												</Table.Thead>
-												<Table.Tbody>
-													{expenseRows}
-												</Table.Tbody>
-											</Table>
+												<Table
+													striped
+													withTableBorder
+													className="mt-4"
+												>
+													<Table.Thead>
+														<Table.Tr>
+															<Table.Th>
+																Category
+															</Table.Th>
+															<Table.Th>
+																Amount
+															</Table.Th>
+															<Table.Th>
+																Notes
+															</Table.Th>
+															<Table.Th>
+																Date
+															</Table.Th>
+															<Table.Th>
+																Payment Type
+															</Table.Th>
+														</Table.Tr>
+													</Table.Thead>
+													<Table.Tbody>
+														{expenseRows}
+													</Table.Tbody>
+												</Table>
+											</Table.ScrollContainer>
 										</>
 									)}
 									{records !== null &&

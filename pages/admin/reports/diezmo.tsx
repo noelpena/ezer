@@ -115,18 +115,18 @@ export default function Diezmo({ session, member_data }: AppProps) {
 
 					{diezmos !== null && diezmos.length > 0 && (
 						<>
-							<Table.ScrollContainer minWidth={600}>
-								<Table striped withTableBorder className="mt-4">
-									<Table.Thead>
-										<Table.Tr>
-											<Table.Th>Amount</Table.Th>
-											<Table.Th>Date</Table.Th>
-											<Table.Th>Payment Type</Table.Th>
-										</Table.Tr>
-									</Table.Thead>
-									<Table.Tbody>{rows}</Table.Tbody>
-								</Table>
-							</Table.ScrollContainer>
+							{/* <Table.ScrollContainer minWidth={350}> */}
+							<Table striped withTableBorder className="mt-4">
+								<Table.Thead>
+									<Table.Tr>
+										<Table.Th>Amount</Table.Th>
+										<Table.Th>Date</Table.Th>
+										<Table.Th>Payment Type</Table.Th>
+									</Table.Tr>
+								</Table.Thead>
+								<Table.Tbody>{rows}</Table.Tbody>
+							</Table>
+							{/* </Table.ScrollContainer> */}
 							<div className="bg-gray-200 p-3">
 								Total: ${addCommasToAmount(total.toFixed(2))}
 								<br />

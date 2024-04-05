@@ -531,7 +531,6 @@ const NewRecord = ({
 								label="Deposit ID"
 								placeholder="Pick Deposit"
 								data={deposits(deposit_data)}
-								searchable
 								size="lg"
 								{...tesoreriaForm.getInputProps("deposit_id")}
 								onChange={handleDepositDate}
