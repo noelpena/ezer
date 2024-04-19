@@ -1,3 +1,9 @@
+# Ezer
+
+Web app built to help church treasurer with bookkeeping and tracking church finances in a seemless and easy to use system.
+
+## Todos:
+
 -   [ ] View Records within a Deposit
 -   [ ] Set Records within a Deposit as "deposited" from "recorded"
 -   [ ] Make it so cannot delete member if there is data or diezmos for them
@@ -5,9 +11,9 @@
 -   [ ] Update forgot password email template
 -   [ ] Add year dropdown to reports 2024, 2023, etc...
 -   [ ] Add form to add or remove admins
--   [ ] Add form to change user's "status" admin, user, editor etc...
+-   [ ] Add form to change user's "status" admin, user, editor etc... Only admins can view
 -   [ ] Add sum for open deposits on deposit list (view deposits would show deposit view. Add missing fields. Only for open deposits)
--   [ ] is last modified being updated on edits?
+-   [ ] isLast modified being updated on edits?
 -   [ ] Add greeting and name to header menu
 -   [ ] Preference of language
 -   [ ] Dark mode please
@@ -15,9 +21,12 @@
 -   [ ] Vendors for expenses? Quickbooks style? To view all expenses for a particular vendor
 -   [ ] "Positions" table? President of X dept., secretary of X society with foreign ID on member's table? If position is not null on member's table they can view reports for that dept/sociedad
 -   [ ] Permissions
--   [ ] Error after login. Firefox error only seems like
+-   [ ] Error after login. Firefox error only seems like and in dev only
 -   [ ] Custom Report and export data.
 -   [ ] CSV import. Yes but ew
+
+## Done:
+
 -   [x] remove Doubleclick on form
 -   [x] Add loading to form until after submission completes. Possibly disable fields
 -   [x] Add loading mantine notification on forms
