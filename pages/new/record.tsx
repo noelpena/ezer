@@ -316,9 +316,9 @@ const NewRecord = ({
 				setShowMemberDropdown(false);
 				setShowDeptDropdown(true);
 				break;
-			case "Other":
+			case "Venta/Actividad":
 				//@ts-ignore
-				tesoreriaForm.setValues({ category_id: null });
+				tesoreriaForm.setValues({ category_id: "4" });
 				setShowMemberDropdown(false);
 				setShowDeptDropdown(true);
 				break;
@@ -409,7 +409,7 @@ const NewRecord = ({
 							size="lg"
 							onClick={handleCategoryClick}
 						>
-							Other
+							Venta/Actividad
 						</Button>
 					</SimpleGrid>
 

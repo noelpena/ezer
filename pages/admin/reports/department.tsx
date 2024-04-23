@@ -27,8 +27,10 @@ type AppProps = {
 	dept_data: Department[];
 };
 
-export default function Department({ session, dept_data }: AppProps) {
-	const [selectDept, setSelectedDepartment] = useState<number>(0);
+export default function DepartmentReport({ session, dept_data }: AppProps) {
+	const [selectDept, setSelectedDepartment] = useState<Department>(
+		{} as Department
+	);
 	const [unfilteredRecords, setUnfilteredRecords] = useState<
 		RecordsView[] | null
 	>(null);
@@ -63,7 +65,7 @@ export default function Department({ session, dept_data }: AppProps) {
 
 	const getDeptRecords = async () => {
 		const { data, error } = await supabase.rpc("get_dept_records", {
-			dept_id: selectDept,
+			dept_id: selectDept.id,
 		});
 		if (data) {
 			setRecords(data);
@@ -92,7 +94,8 @@ export default function Department({ session, dept_data }: AppProps) {
 
 	const handleDeptChange = (value: string | null) => {
 		if (value) {
-			setSelectedDepartment(parseInt(value));
+			var dept = dept_data.filter((obj) => obj.id === parseInt(value))[0];
+			setSelectedDepartment(dept);
 		}
 	};
 
@@ -329,6 +332,17 @@ export default function Department({ session, dept_data }: AppProps) {
 									Ofrenda Total: $
 									{addCommasToAmount(totalOfrenda.toFixed(2))}
 								</Text>
+
+								{selectDept?.balance && (
+									<Text>
+										Starting Balance: $
+										{addCommasToAmount(
+											(selectDept.balance / 100).toFixed(
+												2
+											)
+										)}
+									</Text>
+								)}
 							</div>
 						</>
 					)}

@@ -77,6 +77,7 @@ export type Database = {
       departments: {
         Row: {
           account_type: string | null
+          balance: number | null
           created_at: string
           id: number
           is_active: boolean | null
@@ -85,6 +86,7 @@ export type Database = {
         }
         Insert: {
           account_type?: string | null
+          balance?: number | null
           created_at?: string
           id: number
           is_active?: boolean | null
@@ -93,6 +95,7 @@ export type Database = {
         }
         Update: {
           account_type?: string | null
+          balance?: number | null
           created_at?: string
           id?: number
           is_active?: boolean | null
@@ -147,6 +150,7 @@ export type Database = {
           lowest_tithe: number | null
           total_tithe: number | null
           total_yearly_tithe: number | null
+          user_id: string | null
         }
         Insert: {
           average_tithe?: number | null
@@ -160,6 +164,7 @@ export type Database = {
           lowest_tithe?: number | null
           total_tithe?: number | null
           total_yearly_tithe?: number | null
+          user_id?: string | null
         }
         Update: {
           average_tithe?: number | null
@@ -173,8 +178,17 @@ export type Database = {
           lowest_tithe?: number | null
           total_tithe?: number | null
           total_yearly_tithe?: number | null
+          user_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "public_members_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       preferences: {
         Row: {
@@ -257,6 +271,7 @@ export type Database = {
           member_id: string | null
           payment_type: Database["public"]["Enums"]["PaymentType"]
           status: Database["public"]["Enums"]["Status"] | null
+          user_id: string | null
         }
         Insert: {
           amount: number
@@ -273,6 +288,7 @@ export type Database = {
           member_id?: string | null
           payment_type?: Database["public"]["Enums"]["PaymentType"]
           status?: Database["public"]["Enums"]["Status"] | null
+          user_id?: string | null
         }
         Update: {
           amount?: number
@@ -289,8 +305,16 @@ export type Database = {
           member_id?: string | null
           payment_type?: Database["public"]["Enums"]["PaymentType"]
           status?: Database["public"]["Enums"]["Status"] | null
+          user_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "public_records_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "records_category_id_fkey"
             columns: ["category_id"]
@@ -409,6 +433,7 @@ export type Database = {
           member_id: string | null
           member_name: string | null
           payment_type: Database["public"]["Enums"]["PaymentType"] | null
+          recorded_by: string | null
           status: Database["public"]["Enums"]["Status"] | null
         }
         Relationships: [
@@ -474,6 +499,7 @@ export type Database = {
           member_name: string
           category_name: string
           deposit_amount: number
+          recorded_by: string
         }[]
       }
       get_member_diezmos: {
@@ -495,6 +521,7 @@ export type Database = {
           member_id: string | null
           payment_type: Database["public"]["Enums"]["PaymentType"]
           status: Database["public"]["Enums"]["Status"] | null
+          user_id: string | null
         }[]
       }
       get_stats_amount: {
