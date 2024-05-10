@@ -24,6 +24,7 @@ Web app built to help church treasurer with bookkeeping and tracking church fina
 -   [ ] Error after login. Firefox error only seems like and in dev only
 -   [ ] Custom Report and export data.
 -   [ ] CSV import. Yes but ew
+-   [ ] upgrade next to 14.1.1
 
 ## Done:
 
