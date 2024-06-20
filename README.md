@@ -4,7 +4,8 @@ Web app built to help church treasurer with bookkeeping and tracking church fina
 
 ## Todos:
 
--   [ ] Do not allow record with $0 
+-   [ ] Do not allow record with $0
+-   [ ] If Deposit date is null, set next value on new record form to null
 -   [ ] View Records within a Deposit
 -   [ ] Set Records within a Deposit as "deposited" from "recorded"
 -   [ ] Make it so cannot delete member if there is data or diezmos for them
